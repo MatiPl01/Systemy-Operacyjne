@@ -5,28 +5,34 @@
 #include <unistd.h>
 #include "mylib.h"
 
+
+PointersArray *pa;
+
 /*
  * PointersArray
  */
-PointersArray* create_pointers_array(int length) {
+bool create_pointers_array(int length) {
+    if (pa != NULL) {
+        fprintf(stderr, "Error: Pointers array already exist. Remove the existing pointers array first.");
+        return false;
+    }
     if (length <= 0) {
         fprintf(stderr, "Error: Cannot create a pointers array of length %d.", length);
-        return NULL;
+        return false;
     }
 
     // Create an array of pointers to the results blocks
-    PointersArray *pa = (PointersArray*) malloc(sizeof(PointersArray));
-    char **array = (char**) calloc(length, sizeof(char*));
+    pa = (PointersArray*) malloc(sizeof(PointersArray));
+    char** array = (char**) calloc(length, sizeof(char*));
     pa->length = length;
     pa->array = array;
-
-    return pa;
+    return true;
 }
 
-void free_pointers_array(PointersArray *pa) {
+bool free_pointers_array() {
     if (pa == NULL) {
-        fprintf(stderr, "Error: Cannot free a pointers array. Pointers array is NULL.");
-        return;
+        fprintf(stderr, "Error: Cannot free a pointers array. Pointers array does not exist.");
+        return false;
     }
 
     // Free all array elements
@@ -38,9 +44,11 @@ void free_pointers_array(PointersArray *pa) {
 
     // Free PointersArray struct
     free(pa);
+
+    return true;
 }
 
-int find_empty_index(PointersArray *pa) {
+int find_empty_index() {
     if (pa == NULL) {
         fprintf(stderr, "Error: Cannot find an empty index in a pointers array. Pointers array is NULL.");
         return -1;
@@ -53,7 +61,7 @@ int find_empty_index(PointersArray *pa) {
     return -1;
 }
 
-bool create_block_at_index(PointersArray *pa, char* block, int idx) {
+bool create_block_at_index(char* block, int idx) {
     // Return false if function input parameters are incorrect
     if (pa == NULL || block == NULL || idx < 0 || idx >= pa->length) {
         fprintf(stderr, "Error: Cannot create a memory block. Wrong input parameters.");
@@ -65,7 +73,7 @@ bool create_block_at_index(PointersArray *pa, char* block, int idx) {
     return true;
 }
 
-bool remove_block_at_index(PointersArray *pa, int idx) {
+bool remove_block_at_index(int idx) {
     // Return false if function input parameters are incorrect
     if (pa == NULL || idx < 0 || idx >= pa->length || pa->array[idx] == NULL) {
         fprintf(stderr, "Error: Cannot remove a memory block. Wrong input parameters.");
@@ -79,14 +87,14 @@ bool remove_block_at_index(PointersArray *pa, int idx) {
     return true;
 }
 
-int save_string_block(PointersArray *pa, char* block) {
+int save_string_block(char* block) {
     if (pa == NULL || block == NULL) {
         fprintf(stderr, "Error: Cannot load a file to the pointers array. Wrong input parameters.");
         return -1;
     }
 
     // Find an index where a new block can be stored
-    int idx = find_empty_index(pa);
+    int idx = find_empty_index();
     // Return if there is no empty space remaining in the PointersArray
     if (idx < 0) {
         fprintf(stderr, "Error: Cannot load a file to the pointers array. No enough empty space.");
@@ -94,7 +102,7 @@ int save_string_block(PointersArray *pa, char* block) {
     }
 
     // Save the file content block
-    create_block_at_index(pa, block, idx);
+    create_block_at_index(block, idx);
 
     return idx;
 }
@@ -140,7 +148,9 @@ int get_file_length(FILE *fs) {
     return length;
 }
 
-char* get_files_statistics(char** paths, int no_paths) {
+char* get_files_stats(char** paths, int no_paths) {
+    if (paths == NULL || no_paths <= 0) return NULL;
+
     // Create a temporary file
     char path_buffer[32] = TEMP_FILE_TEMPLATE;
     int path_length = strlen(TEMP_FILE_TEMPLATE);

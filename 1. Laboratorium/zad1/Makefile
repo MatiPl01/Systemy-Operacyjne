@@ -5,7 +5,7 @@ INCDIRS=.
 # Compiler options
 COPT=-O0
 # Compiler flags
-CFLAFS=-Wall -Wextra -Werror -std=c11 -g -I$(INCDIRS) $(COPT)
+CFLAGS=-Wall -Wextra -Werror -std=gnu11 -g -I$(INCDIRS) $(COPT)
 
 # Library name
 LIBNAME=mylib
@@ -26,3 +26,6 @@ shared:
 
 clean:
 	rm -f *.o
+
+clean_all:
+	rm -f *.o *.a *.so

@@ -11,17 +11,17 @@ typedef struct {
     char **array;
 } PointersArray;
 
-PointersArray* create_pointers_array(int length);
+bool create_pointers_array(int length);
 
-void free_pointers_array(PointersArray *pa);
+bool free_pointers_array();
 
-int find_empty_index(PointersArray *pa);
+int find_empty_index();
 
-bool create_block_at_index(PointersArray *pa, char* block, int idx);
+bool create_block_at_index(char* block, int idx);
 
-bool remove_block_at_index(PointersArray *pa, int idx);
+bool remove_block_at_index(int idx);
 
-int save_string_block(PointersArray *pa, char* block);
+int save_string_block(char* block);
 
 /*
  * Files
@@ -30,6 +30,6 @@ char* read_file(char* path);
 
 int get_file_length(FILE *fs);
 
-char* get_files_statistics(char** paths, int no_paths);
+char* get_files_stats(char** paths, int no_paths);
 
 #endif // MYLIB_H
