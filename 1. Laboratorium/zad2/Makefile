@@ -3,37 +3,43 @@ CC=gcc
 # Included directories path
 INC_DIRS=../zad1
 # Libraries directories
-LIB_DIRS=../zad1
+LIB_DIR=../zad1
 # Compiler options
 C_OPT=-O0
 # Compiler flags
-C_FLAGS=-Wall -Wextra -Werror -std=gnu11 -g -I$(INC_DIRS) $(C_OPT)
+C_FLAGS=-Wall -Wextra -Werror -std=gnu11 -g -I $(INC_DIRS) -L $(LIB_DIR) $(C_OPT) -D MEASURE_TIME
 
 # Library name
-LIB_NAME=mylib
+LIB_NAME=sysops
+# Executable files prefix
+EXE_PREFIX=tests_
 # Report file name
 REPORT_NAME=raport2.txt
 
 # Targets names
-TARGETS=test
+TARGETS=static_tests shared_tests dynamic_tests
 
 
 all: $(TARGETS)
 
 static:
-	make -C ../zad1 static
-	$(CC) $(CFLAGS) main.c -o test-static -L$(LIB_DIRS) $(LIB_NAME).a #FIXME
+	make -C $(LIB_DIR) static
 
 shared:
-	make -C ../zad1 shared
-	$(CC) $(CFLAGS) main.c -o test-shared -L$(LIB_DIRS) $(LIB_NAME).so #FIXME
+	make -C $(LIB_DIR) shared
 
 clean:
-	rm -f *.o
+	rm -f $(REPORT_NAME)
+	rm -f *_tests
 
 clean_all: clean
-	rm -f $(REPORT_NAME)
-	make -C ../zad1 clean_all
+	make -C $(LIB_DIR) clean_all
 
-test: static shared
-	#TODO
+static_tests: static
+	$(CC) $(C_FLAGS) -static main.c -l $(LIB_NAME) -o $(EXE_PREFIX)static
+
+shared_tests: shared
+	$(CC) $(C_FLAGS) -fPIC -shared main.c -o $(EXE_PREFIX)shared
+
+dynamic_tests: shared
+	$(CC) $(C_FLAGS) -D DYNAMIC_MODE main.c -ldl -o $(EXE_PREFIX)dynamic

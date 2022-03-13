@@ -8,7 +8,7 @@ COPT=-O0
 CFLAGS=-Wall -Wextra -Werror -std=gnu11 -g -I$(INCDIRS) $(COPT)
 
 # Library name
-LIBNAME=mylib
+LIBNAME=libsysops
 
 # Targets names
 TARGETS=static shared
