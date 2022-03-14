@@ -11,13 +11,13 @@ C_FLAGS=-Wall -Wextra -Werror -std=gnu11 -g -I $(INC_DIRS) -L $(LIB_DIR) $(C_OPT
 
 # Library name
 LIB_NAME=sysops
-# Executable files prefix
-EXE_PREFIX=tests_
+# Output files prefix
+OUT_PREFIX=tests_
 # Report file name
 REPORT_PATH=raport2.txt
 
 # Targets names
-TARGETS=$(EXE_PREFIX)static $(EXE_PREFIX)shared $(EXE_PREFIX)dynamic
+TARGETS=$(OUT_PREFIX)static $(OUT_PREFIX)shared $(OUT_PREFIX)dynamic
 
 
 all: $(TARGETS)
@@ -30,34 +30,37 @@ shared:
 
 clean:
 	rm -f $(REPORT_PATH)
-	rm -f *_tests
+	rm -f $(OUT_PREFIX)*
 
 clean_all: clean
 	make -C $(LIB_DIR) clean_all
 
-$(EXE_PREFIX)static: static
-	$(CC) $(C_FLAGS) -static main.c -l $(LIB_NAME) -o $(EXE_PREFIX)static
+$(OUT_PREFIX)static: static
+	$(CC) $(C_FLAGS) main.c -l $(LIB_NAME) -o $(OUT_PREFIX)static
 
-#FIXME
-$(EXE_PREFIX)shared: shared
-	$(CC) $(C_FLAGS) -shared main.c -fPIC -o $(EXE_PREFIX)shared
+$(OUT_PREFIX)shared: shared
+	$(CC) $(C_FLAGS) main.c -Wl,-R $(LIB_DIR) -l $(LIB_NAME) -o $(OUT_PREFIX)shared
 
-$(EXE_PREFIX)dynamic: shared
-	$(CC) $(C_FLAGS) -D DYNAMIC_MODE main.c -ldl -o $(EXE_PREFIX)dynamic
+$(OUT_PREFIX)dynamic: shared
+	$(CC) $(C_FLAGS) main.c -D DYNAMIC_MODE -ldl -o $(OUT_PREFIX)dynamic
 
 report: clean all
-	echo "============ Static library tests ===========" >> $(REPORT_PATH)
-	$(call run_tests,$(EXE_PREFIX)static)
-	echo "\n============ Shared library tests ===========" >> $(REPORT_PATH)
-	$(call run_tests,$(EXE_PREFIX)shared)
-	echo "\n============ Dynamic library tests ==========" >> $(REPORT_PATH)
-	$(call run_tests,$(EXE_PREFIX)dynamic)
+	$(call write_line,"============ Static library tests ===========")
+	$(call run_tests,$(OUT_PREFIX)static)
+	$(call write_line,"\n============ Shared library tests ===========")
+	$(call run_tests,$(OUT_PREFIX)shared)
+	$(call write_line,"\n============ Dynamic library tests ==========")
+	$(call run_tests,$(OUT_PREFIX)dynamic)
+
+define write_line
+	echo $1 >> $(REPORT_PATH)
+endef
 
 define run_tests
-	echo "1 small file" >> $(REPORT_PATH)
-	$(call run_test,$1,test-1)
+	$(call run_test,$1,test-1,"1 small file")
 endef
 
 define run_test
-    ./$(1) `cat ./input/$(2).txt | tr '\r\n' ' '` >> $(REPORT_PATH)
+	$(call write_line,$3)
+    ./$1 `cat ./input/$2.txt | tr '\r\n' ' '` >> $(REPORT_PATH)
 endef

@@ -1,7 +1,7 @@
 #ifndef LIBSYSOPS_H
 #define LIBSYSOPS_H
 
-#define TEMP_FILE_TEMPLATE "/tmp/my-lib-tempXXXXXX"
+#define TEMP_FILE_TEMPLATE "/tmp/sysops-tempXXXXXX"
 
 /*
  * PointersArray
@@ -26,10 +26,6 @@ int save_string_block(char* block);
 /*
  * Files
  */
-//char* read_file(char* path);
-//
-//int get_file_length(FILE *fs);
-
 char* get_files_stats(char** paths, int no_paths);
 
 bool does_file_exist(char* path);
