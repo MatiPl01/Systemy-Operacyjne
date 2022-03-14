@@ -72,7 +72,8 @@ bool create_block_at_index(char* block, int idx) {
         return false;
     }
     // Save the block at the specified index
-    pa->array[idx] = block;
+    pa->array[idx] = (char*) calloc(strlen(block) + 1, sizeof(char));
+    strcpy(pa->array[idx], block);
 
     return true;
 }

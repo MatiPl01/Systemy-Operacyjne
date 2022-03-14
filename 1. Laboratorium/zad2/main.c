@@ -42,11 +42,41 @@
 #endif
 
 #ifdef MEASURE_TIME
-    #include <unistd.h>
-    #include <stdint.h>
     #include <sys/times.h>
+    #include <unistd.h>
 
-    // TODO - declare time testing functions
+    struct tms tms_start_buffer, tms_end_buffer;
+    clock_t clock_t_start, clock_t_end;
+
+    void start_timer() {
+        clock_t_start = times(&tms_start_buffer);
+    }
+
+    void stop_timer() {
+        clock_t_end = times(&tms_end_buffer);
+    }
+
+    void print_times_headers() {
+        printf("\n               %-10s %-10s %-10s\n", "Real", "System", "User");
+    }
+
+    void print_time(double time) {
+        char s[20];
+        sprintf(s, "%.6f", time);
+        printf("%-10s ", s);
+    }
+
+    double calc_time(clock_t end, clock_t start) {
+        return (end - start) / sysconf(_SC_CLK_TCK);
+    }
+
+    void print_times(char* cmd) {
+        printf("%-15s", cmd);
+        print_time(calc_time(clock_t_start, clock_t_end));
+        print_time(calc_time(tms_start_buffer.tms_stime, tms_end_buffer.tms_stime));
+        print_time(calc_time(tms_start_buffer.tms_cutime, tms_end_buffer.tms_cutime));
+        printf("\n");
+    }
 #endif
 
 void handle_create_table(int *i, int argc, char** argv);
@@ -58,6 +88,7 @@ char** get_files_paths_args(int *i, int argc, char** argv, int no_args);
 void handle_remove_block(int *i, int argc, char** argv);
 int get_removed_block_idx(int *i, int argc, char** argv);
 
+void exec_cmd(int *i, int argc, char** argv);
 char* get_next_arg(int *i, int argc, char** argv);
 int calc_cmd_args(int cmd_idx, int argc, char** argv);
 int parse_int(char* str);
@@ -68,38 +99,22 @@ void free_array(char** arr, int length);
 
 
 int main(int argc, char** argv) {
-    #ifdef DYNAMIC_MODE
-        load_my_lib();
-    #endif
-
     if (argc <= 1) {
         fprintf(stderr, "Error: No arguments were specified.\n");
         return 1;
     }
 
-    char* cmd;
-    bool is_table_created = false;
-    for (int i = 1; i < argc; i++) {
-        cmd = argv[i];
+    #ifdef DYNAMIC_MODE
+        load_my_lib();
+    #endif
 
-        if (strcmp(cmd, CREATE_TABLE_CMD) == 0) {
-            handle_create_table(&i, argc, argv);
-            is_table_created = true;
-        } else if (strcmp(cmd, WC_FILES_CMD) == 0) {
-            handle_wc_files(&i, argc, argv);
-        } else if (strcmp(cmd, REMOVE_BLOCK_CMD) == 0) {
-            handle_remove_block(&i, argc, argv);
-        } else {
-            fprintf(stderr, "Error: Command '%s' is not recognized.\n", cmd);
-            if (is_table_created) free_pointers_array();
-            exit(1);
-        }
-    }
+    #ifdef MEASURE_TIME
+        print_times_headers();
+    #endif
 
-    bool was_freed = free_pointers_array();
-    if (!was_freed) {
-        fprintf(stderr, "Error: Pointers array was not freed.\n");
-    }
+    for (int i = 1; i < argc; i++) exec_cmd(&i, argc, argv);
+
+    free_pointers_array();
 
     return 0;
 }
@@ -151,16 +166,14 @@ void handle_wc_files(int *i, int argc, char** argv) {
     char* stats = get_files_stats(paths, no_args);
     free_array(paths, no_args);
 
-    int save_idx = save_string_block(stats);
-
-    if (save_idx < 0) {
+    if (save_string_block(stats) < 0) {
         fprintf(stderr, "Error: Cannot complete %s. Statistics block cannot be saved.\n", WC_FILES_CMD);
         free_pointers_array();
+        free(stats);
         exit(1);
     }
 
-    // TODO - save stats to the report file
-    printf("Stats:\n%s\n", stats);
+    free(stats);
 }
 
 int get_removed_block_idx(int *i, int argc, char** argv) {
@@ -217,4 +230,28 @@ void free_array(char** arr, int length) {
 int parse_int(char* str) {
     char *end_ptr;
     return (int) strtol(str, &end_ptr, 10);
+}
+
+void exec_cmd(int *i, int argc, char** argv) {
+    #ifdef MEASURE_TIME
+        start_timer();
+    #endif
+
+    char* cmd = argv[*i];
+    if (strcmp(cmd, CREATE_TABLE_CMD) == 0) {
+        handle_create_table(i, argc, argv);
+    } else if (strcmp(cmd, WC_FILES_CMD) == 0) {
+        handle_wc_files(i, argc, argv);
+    } else if (strcmp(cmd, REMOVE_BLOCK_CMD) == 0) {
+        handle_remove_block(i, argc, argv);
+    } else {
+        fprintf(stderr, "Error: Command '%s' is not recognized.\n", cmd);
+        free_pointers_array();
+        exit(1);
+    }
+
+    #ifdef MEASURE_TIME
+        stop_timer();
+        print_times(cmd);
+    #endif
 }

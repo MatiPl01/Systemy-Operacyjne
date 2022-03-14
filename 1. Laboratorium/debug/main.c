@@ -14,7 +14,7 @@
 
 
 #ifdef DYNAMIC_MODE
-#include <dlfcn.h>
+    #include <dlfcn.h>
 
     bool  (*create_pointers_array)(int);
     bool  (*free_pointers_array)(void);
@@ -27,7 +27,7 @@
 
         if (lib_handle == NULL) {
             perror("dlopen");
-            fprintf(stderr, "Cannot load the dynamic library '%s'\n", LIB_SHARED_PATH);
+            fprintf(stderr, "Error: Cannot load the dynamic library '%s'\n", LIB_SHARED_PATH);
             exit(1);
         }
 
@@ -42,8 +42,6 @@
 #endif
 
 #ifdef MEASURE_TIME
-#include <unistd.h>
-    #include <stdint.h>
     #include <sys/times.h>
 
     // TODO - declare time testing functions
@@ -68,9 +66,6 @@ void free_array(char** arr, int length);
 
 
 int main(int argc, char** argv) {
-    printf("IN MAIN\n");
-    system("..");
-
     #ifdef DYNAMIC_MODE
         load_my_lib();
     #endif
@@ -84,33 +79,21 @@ int main(int argc, char** argv) {
     bool is_table_created = false;
     for (int i = 1; i < argc; i++) {
         cmd = argv[i];
-        printf("\tIn loop: %s\n", cmd);
 
         if (strcmp(cmd, CREATE_TABLE_CMD) == 0) {
-            printf("Calling %s\n", CREATE_TABLE_CMD);
-            printf("i = %d\n", i);
-
-            printf("argc = %d\n", argc);
-            printf("Argv:\n");
-            for (int j = 0; j < argc; j++) printf("%s, ", argv[j]);
-            printf("\n");
-
             handle_create_table(&i, argc, argv);
             is_table_created = true;
         } else if (strcmp(cmd, WC_FILES_CMD) == 0) {
-            printf("Calling %s\n", WC_FILES_CMD);
             handle_wc_files(&i, argc, argv);
         } else if (strcmp(cmd, REMOVE_BLOCK_CMD) == 0) {
-            printf("Calling %s\n", REMOVE_BLOCK_CMD);
             handle_remove_block(&i, argc, argv);
         } else {
-            if (is_table_created) free_pointers_array();
             fprintf(stderr, "Error: Command '%s' is not recognized.\n", cmd);
+            if (is_table_created) free_pointers_array();
             exit(1);
         }
     }
 
-    printf("HERE\n");
     bool was_freed = free_pointers_array();
     if (!was_freed) {
         fprintf(stderr, "Error: Pointers array was not freed.\n");
@@ -127,14 +110,12 @@ int get_table_size_arg(int *i, int argc, char** argv) {
         fprintf(stderr, "Error: %s expected a size argument.\n", CREATE_TABLE_CMD);
         exit(1);
     }
-    printf("atoi: %d\n", parse_int(arg));
     return parse_int(arg);
 }
 
 void handle_create_table(int *i, int argc, char** argv) {
     // Try to create a pointers array
     int size = get_table_size_arg(i, argc, argv);
-    printf("SIze: %d\n", size);
     // Check if a pointers array was successfully created
     bool was_created = create_pointers_array(size);
     // Stop a program if a pointers array already exist
@@ -168,22 +149,22 @@ void handle_wc_files(int *i, int argc, char** argv) {
     char* stats = get_files_stats(paths, no_args);
     free_array(paths, no_args);
 
-    int save_idx = save_string_block(stats);
-
-    if (save_idx < 0) {
+    if (save_string_block(stats) < 0) {
         fprintf(stderr, "Error: Cannot complete %s. Statistics block cannot be saved.\n", WC_FILES_CMD);
         free_pointers_array();
+        free(stats);
         exit(1);
     }
 
     // TODO - save stats to the report file
     printf("Stats:\n%s\n", stats);
+
+    free(stats);
 }
 
 int get_removed_block_idx(int *i, int argc, char** argv) {
     // Try to get the index argument
     char* arg = get_next_arg(i, argc, argv);
-    printf("NExt arg: %s\n", arg);
     if (arg == NULL) {
         fprintf(stderr, "Error: %s expected an index argument.\n", REMOVE_BLOCK_CMD);
         exit(1);
@@ -202,10 +183,6 @@ void handle_remove_block(int *i, int argc, char** argv) {
 }
 
 bool is_cmd_arg(char* arg) {
-//    printf("Compare %s: %d\n", CREATE_TABLE_CMD, strcmp(arg, CREATE_TABLE_CMD));
-//    printf("Compare %s: %d\n", WC_FILES_CMD, strcmp(arg, WC_FILES_CMD));
-//    printf("Compare %s: %d\n", REMOVE_BLOCK_CMD, strcmp(arg, REMOVE_BLOCK_CMD));
-
     return strcmp(arg, CREATE_TABLE_CMD) != 0 &&
            strcmp(arg, WC_FILES_CMD) != 0 &&
            strcmp(arg, REMOVE_BLOCK_CMD) != 0;
@@ -219,11 +196,7 @@ bool is_number(const char* arg) {
 }
 
 char* get_next_arg(int *i, int argc, char** argv) {
-//    printf("In get_next_arg: i = %d, argc = %d, curr_arg = %s\n", *i, argc, argv[*i]);
-    if (++(*i) >= argc || !is_cmd_arg(argv[*i])) {
-//        printf("Return NULL, i = %d, arg = %s, is ok = %d\n", *i, argv[*i], is_cmd_arg(argv[*i]));
-        return NULL;
-    }
+    if (++(*i) >= argc || !is_cmd_arg(argv[*i])) return NULL;
     return argv[*i];
 }
 
