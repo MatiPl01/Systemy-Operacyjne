@@ -131,4 +131,4 @@ Mkfile.old
 dkms.conf
 
 # My files
-tests_*
+tests*

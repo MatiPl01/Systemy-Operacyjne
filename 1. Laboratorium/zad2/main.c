@@ -12,8 +12,6 @@
 #define WC_FILES_CMD "wc_files"
 #define REMOVE_BLOCK_CMD "remove_block"
 
-#define REPORT_FILE_NAME "raport2.txt"
-
 
 #ifdef DYNAMIC_MODE
     #include <dlfcn.h>
@@ -50,8 +48,17 @@
     struct tms tms_start_buffer, tms_end_buffer;
     clock_t clock_t_start, clock_t_end;
 
+    struct tms tms_start_buffer_total;
+    clock_t clock_t_start_total;
+
+    bool started_first_measurement = false;
+
     void start_timer() {
         clock_t_start = times(&tms_start_buffer);
+        if (!started_first_measurement) {
+            clock_t_start_total = times(&tms_start_buffer_total);
+            started_first_measurement = true;
+        }
     }
 
     void stop_timer() {
@@ -64,19 +71,27 @@
 
     void print_time(double time) {
         char s[20];
-        sprintf(s, "%.6f", time);
+        sprintf(s, "%.2f", time);
         printf("%-10s ", s);
     }
 
     double calc_time(clock_t end, clock_t start) {
-        return (end - start) / sysconf(_SC_CLK_TCK);
+        return (double)(end - start) / (double) sysconf(_SC_CLK_TCK);
     }
 
     void print_times(char* cmd) {
         printf("%-15s", cmd);
-        print_time(calc_time(clock_t_start, clock_t_end));
-        print_time(calc_time(tms_start_buffer.tms_stime, tms_end_buffer.tms_stime));
-        print_time(calc_time(tms_start_buffer.tms_cutime, tms_end_buffer.tms_cutime));
+        print_time(calc_time(clock_t_end, clock_t_start));
+        print_time(calc_time(tms_end_buffer.tms_stime, tms_start_buffer.tms_stime));
+        print_time(calc_time(tms_end_buffer.tms_cutime, tms_start_buffer.tms_cutime));
+        printf("\n");
+    }
+
+    void print_total_times() {
+        printf("%-15s", "TOTAL");
+        print_time(calc_time(clock_t_end, clock_t_start_total));
+        print_time(calc_time(tms_end_buffer.tms_stime, tms_start_buffer_total.tms_stime));
+        print_time(calc_time(tms_end_buffer.tms_cutime, tms_start_buffer_total.tms_cutime));
         printf("\n");
     }
 #endif
@@ -116,6 +131,10 @@ int main(int argc, char** argv) {
     #endif
 
     for (int i = 1; i < argc; i++) exec_cmd(&i, argc, argv);
+
+    #ifdef MEASURE_TIME
+        print_total_times();
+    #endif
 
     free_pointers_array();
 
@@ -257,6 +276,8 @@ void exec_cmd(int *i, int argc, char** argv) {
 
     #ifdef MEASURE_TIME
         stop_timer();
-        print_times(cmd);
+        #ifdef VERBOSE
+            print_times(cmd);
+        #endif
     #endif
 }

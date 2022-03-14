@@ -1,0 +1,64 @@
+create_table 10000
+wc_files
+../files/extremely-huge-file-1.txt
+../files/extremely-huge-file-2.txt
+../files/extremely-huge-file-1.txt
+../files/extremely-huge-file-2.txt
+../files/extremely-huge-file-1.txt
+wc_files
+../files/extremely-huge-file-1.txt
+../files/extremely-huge-file-2.txt
+../files/extremely-huge-file-1.txt
+../files/extremely-huge-file-2.txt
+../files/extremely-huge-file-1.txt
+remove_block 1
+wc_files
+../files/extremely-huge-file-1.txt
+../files/extremely-huge-file-2.txt
+../files/extremely-huge-file-1.txt
+../files/extremely-huge-file-2.txt
+../files/extremely-huge-file-1.txt
+wc_files
+../files/extremely-huge-file-1.txt
+../files/extremely-huge-file-2.txt
+../files/extremely-huge-file-1.txt
+../files/extremely-huge-file-2.txt
+../files/extremely-huge-file-1.txt
+remove_block 2
+wc_files
+../files/extremely-huge-file-1.txt
+../files/extremely-huge-file-2.txt
+../files/extremely-huge-file-1.txt
+../files/extremely-huge-file-2.txt
+../files/extremely-huge-file-1.txt
+remove_block 0
+wc_files
+../files/extremely-huge-file-1.txt
+../files/extremely-huge-file-2.txt
+../files/extremely-huge-file-1.txt
+../files/extremely-huge-file-2.txt
+../files/extremely-huge-file-1.txt
+remove_block 0
+remove_block 2
+wc_files
+../files/extremely-huge-file-1.txt
+../files/extremely-huge-file-2.txt
+../files/extremely-huge-file-1.txt
+../files/extremely-huge-file-2.txt
+../files/extremely-huge-file-1.txt
+remove_block 1
+wc_files
+../files/extremely-huge-file-1.txt
+../files/extremely-huge-file-2.txt
+../files/extremely-huge-file-1.txt
+../files/extremely-huge-file-2.txt
+../files/extremely-huge-file-1.txt
+wc_files
+../files/extremely-huge-file-1.txt
+../files/extremely-huge-file-2.txt
+../files/extremely-huge-file-1.txt
+../files/extremely-huge-file-2.txt
+../files/extremely-huge-file-1.txt
+remove_block 0
+remove_block 2
+remove_block 1
