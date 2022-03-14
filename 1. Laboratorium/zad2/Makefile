@@ -14,10 +14,10 @@ LIB_NAME=sysops
 # Executable files prefix
 EXE_PREFIX=tests_
 # Report file name
-REPORT_NAME=raport2.txt
+REPORT_PATH=raport2.txt
 
 # Targets names
-TARGETS=static_tests shared_tests dynamic_tests
+TARGETS=$(EXE_PREFIX)static $(EXE_PREFIX)shared $(EXE_PREFIX)dynamic
 
 
 all: $(TARGETS)
@@ -29,17 +29,35 @@ shared:
 	make -C $(LIB_DIR) shared
 
 clean:
-	rm -f $(REPORT_NAME)
+	rm -f $(REPORT_PATH)
 	rm -f *_tests
 
 clean_all: clean
 	make -C $(LIB_DIR) clean_all
 
-static_tests: static
+$(EXE_PREFIX)static: static
 	$(CC) $(C_FLAGS) -static main.c -l $(LIB_NAME) -o $(EXE_PREFIX)static
 
-shared_tests: shared
-	$(CC) $(C_FLAGS) -fPIC -shared main.c -o $(EXE_PREFIX)shared
+#FIXME
+$(EXE_PREFIX)shared: shared
+	$(CC) $(C_FLAGS) -shared main.c -fPIC -o $(EXE_PREFIX)shared
 
-dynamic_tests: shared
+$(EXE_PREFIX)dynamic: shared
 	$(CC) $(C_FLAGS) -D DYNAMIC_MODE main.c -ldl -o $(EXE_PREFIX)dynamic
+
+report: clean all
+	echo "============ Static library tests ===========" >> $(REPORT_PATH)
+	$(call run_tests,$(EXE_PREFIX)static)
+	echo "\n============ Shared library tests ===========" >> $(REPORT_PATH)
+	$(call run_tests,$(EXE_PREFIX)shared)
+	echo "\n============ Dynamic library tests ==========" >> $(REPORT_PATH)
+	$(call run_tests,$(EXE_PREFIX)dynamic)
+
+define run_tests
+	echo "1 small file" >> $(REPORT_PATH)
+	$(call run_test,$1,test-1)
+endef
+
+define run_test
+    ./$(1) `cat ./input/$(2).txt | tr '\r\n' ' '` >> $(REPORT_PATH)
+endef

@@ -12,6 +12,8 @@
 #define WC_FILES_CMD "wc_files"
 #define REMOVE_BLOCK_CMD "remove_block"
 
+#define REPORT_FILE_NAME "raport2.txt"
+
 
 #ifdef DYNAMIC_MODE
     #include <dlfcn.h>
@@ -57,7 +59,7 @@
     }
 
     void print_times_headers() {
-        printf("\n               %-10s %-10s %-10s\n", "Real", "System", "User");
+        printf("               %-10s %-10s %-10s\n", "Real", "System", "User");
     }
 
     void print_time(double time) {
@@ -79,6 +81,10 @@
     }
 #endif
 
+void exec_cmd(int *i, int argc, char** argv);
+char* get_next_arg(int *i, int argc, char** argv);
+int calc_cmd_args(int cmd_idx, int argc, char** argv);
+
 void handle_create_table(int *i, int argc, char** argv);
 int get_table_size_arg(int *i, int argc, char** argv);
 
@@ -88,9 +94,6 @@ char** get_files_paths_args(int *i, int argc, char** argv, int no_args);
 void handle_remove_block(int *i, int argc, char** argv);
 int get_removed_block_idx(int *i, int argc, char** argv);
 
-void exec_cmd(int *i, int argc, char** argv);
-char* get_next_arg(int *i, int argc, char** argv);
-int calc_cmd_args(int cmd_idx, int argc, char** argv);
 int parse_int(char* str);
 bool is_cmd_arg(char* arg);
 bool is_number(const char* arg);
@@ -204,7 +207,9 @@ bool is_cmd_arg(char* arg) {
 
 bool is_number(const char* arg) {
     for (int i = 0; arg[i] != '\0'; i++) {
-        if (!isdigit(arg[i])) return false;
+        if (!isdigit(arg[i])) {
+            return false;
+        }
     }
     return true;
 }

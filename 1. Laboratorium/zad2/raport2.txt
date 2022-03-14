@@ -1,0 +1,15 @@
+============ Static library tests ===========
+1 small file
+               Real       System     User      
+create_table   0.000000   0.000000   0.000000   
+wc_files       0.000000   0.000000   0.000000   
+remove_block   0.000000   0.000000   0.000000   
+
+============ Shared library tests ===========
+
+============ Dynamic library tests ==========
+1 small file
+               Real       System     User      
+create_table   0.000000   0.000000   0.000000   
+wc_files       0.000000   0.000000   0.000000   
+remove_block   0.000000   0.000000   0.000000   

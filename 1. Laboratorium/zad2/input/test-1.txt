@@ -1,0 +1,3 @@
+create_table 1
+wc_files ./files/small-file-1.txt
+remove_block 0
