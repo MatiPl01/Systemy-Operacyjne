@@ -94,10 +94,10 @@ int main(int argc, char** argv) {
         }
     }
 
-    bool was_freed = free_pointers_array();
-    if (!was_freed) {
-        fprintf(stderr, "Error: Pointers array was not freed.\n");
-    }
+//    bool was_freed = free_pointers_array();
+//    if (!was_freed) {
+//        fprintf(stderr, "Error: Pointers array was not freed.\n");
+//    }
 
     return 0;
 }

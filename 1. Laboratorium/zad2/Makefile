@@ -7,9 +7,9 @@ LIB_DIR=../zad1
 # Compiler optimization
 C_OPT=-O0
 # Declarations
-DECLARATIONS=MEASURE_TIME VERBOSE
+DECLARATIONS=_
 # Compiler flags
-C_FLAGS=-Wall -Wextra -Werror -std=gnu11 -g -I $(INC_DIRS) -L $(LIB_DIR) $(C_OPT) -D MEASURE_TIME -D VERBOSE
+C_FLAGS=-Wall -Wextra -Werror -std=gnu11 -g -I $(INC_DIRS) -L $(LIB_DIR) $(C_OPT) -D $(DECLARATIONS)
 
 # Compiled file name
 COMP_FILE_NAME=../zad2/main.c
@@ -41,12 +41,13 @@ clean_all: clean
 $(OUT_NAME): static
 	$(CC) $(C_FLAGS) $(COMP_FILE_NAME) -static -l $(LIB_NAME) -o $(OUT_NAME)
 
-report: clean all
+report: clean
+	make all DECLARATIONS=MEASURE_TIME=1
 	$(call write_line,"=================== Tests ===================")
 	$(call run_tests,$(OUT_NAME))
 
 define write_line
-	echo $1 >> $(REPORT_PATH)
+	echo $1 | tee -a $(REPORT_PATH)
 endef
 
 define run_tests
@@ -58,5 +59,5 @@ endef
 
 define run_test
 	$(call write_line,$3)
-    ./$1 `cat $(INPUT_PATH)/$2.txt | tr '\r\n' ' '` >> $(REPORT_PATH)
+    ./$1 `cat $(INPUT_PATH)/$2.txt | tr '\r\n' ' '` | tee -a $(REPORT_PATH)
 endef

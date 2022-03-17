@@ -8,8 +8,10 @@ LIB_DIR=../zad1
 C_OPT_LIST=-O0 -O1 -O2 -O3 -Os
 # Default optimization level
 C_OPT=-O0
+# Declarations
+DECLARATIONS=_
 # Compiler flags
-C_FLAGS=-Wall -Wextra -Werror -std=gnu11 -g -I $(INC_DIRS) -L $(LIB_DIR) -D MEASURE_TIME
+C_FLAGS=-Wall -Wextra -Werror -std=gnu11 -g -I $(INC_DIRS) -L $(LIB_DIR) -D $(DECLARATIONS)
 
 # Compiled file name
 COMP_FILE_NAME=../zad2/main.c
@@ -55,7 +57,7 @@ report: clean
   		echo "\nCurrent compiler optimization option: "; \
   		echo $$OPT; \
   		echo ""; \
-  		make all C_OPT=$$OPT; \
+  		make all C_OPT=$$OPT DECLARATIONS=MEASURE_TIME=0; \
   		make run_tests C_OPT=$$OPT; \
   	done
 
@@ -76,7 +78,7 @@ define write_header
 endef
 
 define write_line
-	echo $1 >> $(REPORT_PATH)
+	echo $1 | tee -a $(REPORT_PATH)
 endef
 
 define run_tests_helper
@@ -88,5 +90,5 @@ endef
 
 define run_test
 	$(call write_line,$3)
-    ./$1 `cat $(INPUT_PATH)/$2.txt | tr '\r\n' ' '` >> $(REPORT_PATH)
+    ./$1 `cat $(INPUT_PATH)/$2.txt | tr '\r\n' ' '` | tee -a $(REPORT_PATH)
 endef

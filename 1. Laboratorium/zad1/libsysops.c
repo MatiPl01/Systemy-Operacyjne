@@ -143,6 +143,7 @@ char* get_files_stats(char** paths, int no_paths) {
     unlink(path_buffer);
     free(temp_path);
     free(cmd);
+
     // Move the cursor to the end of a file to get a length of
     // a temporary file
     int length = (int) lseek(file_id, 0, SEEK_END);
@@ -150,6 +151,12 @@ char* get_files_stats(char** paths, int no_paths) {
     lseek(file_id, 0, SEEK_SET);
     // Create the result string
     char* result = (char*) calloc(length + 1, sizeof(char));
+
+    if (result == NULL) {
+        fprintf(stderr, "Error: failed to allocate memory\n");
+        return NULL;
+    }
+
     int read_file_length = (int) read(file_id, result, length);
     close(file_id);
     // Something went wrong if a length of the temporary file content,
@@ -164,8 +171,8 @@ char* get_files_stats(char** paths, int no_paths) {
 
 int calc_cmd_length(char* temp_path, char** paths, int no_paths) {
     /* wc <paths> > <temp_path>\0
-     * \_/       \_/            |
-     *  3         3             1
+     * \_/        \/            |
+     *  3         2             1
      */
     int length = strlen(temp_path);
     for (int i = 0; i < no_paths; i++) length += strlen(paths[i]) + 1;

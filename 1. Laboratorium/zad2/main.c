@@ -36,6 +36,8 @@
         remove_block_at_index = dlsym(lib_handle, "remove_block_at_index");
         save_string_block = dlsym(lib_handle, "save_string_block");
         get_files_stats = dlsym(lib_handle, "get_files_stats");
+
+        dlclose(lib_handle);
     }
 #else
     #include LIB_HEADER_PATH
@@ -276,8 +278,11 @@ void exec_cmd(int *i, int argc, char** argv) {
 
     #ifdef MEASURE_TIME
         stop_timer();
-        #ifdef VERBOSE
-            print_times(cmd);
-        #endif
+
+        /*
+         * 0 - silent mode (only total time)
+         * 1 - verbose mode (time of each step)
+         */
+        if (MEASURE_TIME == 1) print_times(cmd);
     #endif
 }
