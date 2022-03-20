@@ -9,25 +9,32 @@ C_FLAGS=-Wall -Wextra -Werror -std=gnu11 -g -L $(LIB_DIR) $(C_OPT)
 
 # Compiled file name
 COMP_FILE_NAME=main.c
-# Libraries names
-LIB_NAME=copylib
-# Output file name
-OUT_NAME=copy
+
+# Output files names
+COPY_LIB_NAME=copylib
+COPY_SYS_NAME=copysys
 
 # Targets names
-TARGETS=$(OUT_NAME)
+TARGETS=copylib copysys
 
 
 all: $(TARGETS)
 
 static:
-	make -C $(LIB_DIR) static
+	make -C $(LIB_DIR) $(LIB_NAME)_static
 
-$(OUT_NAME): static
-	$(CC) $(C_FLAGS) $(COMP_FILE_NAME) -static -l $(LIB_NAME) -o $(OUT_NAME)
+
+copylib: clean
+	make static LIB_NAME=$(COPY_LIB_NAME)
+	$(CC) $(C_FLAGS) $(COMP_FILE_NAME) -static -l $(COPY_LIB_NAME) -o $(COPY_LIB_NAME)
+
+copysys: clean
+	make static LIB_NAME=$(COPY_SYS_NAME)
+	$(CC) $(C_FLAGS) $(COMP_FILE_NAME) -static -l $(COPY_SYS_NAME) -o $(COPY_SYS_NAME) -D SYS_MODE
 
 clean:
-	rm -f $(OUT_NAME)
+	rm -f $(COPY_LIB_NAME)
+	rm -f $(COPY_SYS_NAME)
 
 clean_all: clean
 	rm -f $(LIB_DIR)/*.o $(LIB_DIR)/*.a

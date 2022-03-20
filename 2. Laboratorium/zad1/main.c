@@ -1,8 +1,15 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
-#include "libraries/libcopylib.h"
 
+#define LIB_COPY_LIB "./libraries/libcopylib.h"
+#define LIB_COPY_SYS "./libraries/libcopysys.h"
+
+#ifdef SYS_MODE
+    #include LIB_COPY_SYS
+#else
+    #include LIB_COPY_LIB
+#endif
 
 char* get_input_line(char* mess);
 char* get_file_path(int *i, int argc, char* argv[], char* mess);
@@ -20,7 +27,13 @@ int main(int argc, char* argv[]) {
     printf("  Target: %s\n", target_path);
 
     // Copy a file
-    bool is_successful = copy_file_lib(source_path, target_path);
+    bool is_successful;
+
+    #ifdef SYS_MODE
+        is_successful = copy_file_sys(source_path, target_path);
+    #else
+        is_successful = copy_file_lib(source_path, target_path);
+    #endif
 
     // Check if the copy operation was successful
     if (is_successful) {

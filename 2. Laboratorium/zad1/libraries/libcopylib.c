@@ -5,6 +5,16 @@
 #include "libcopylib.h"
 
 
+int get_line_length(FILE* f_ptr);
+char* find_next_line(FILE* f_ptr);
+char* read_line(FILE* f_ptr);
+bool write_file(FILE* f_ptr, char* line);
+bool reached_EOF(FILE* f_ptr);
+bool copy_file_helper(FILE *source_ptr, FILE *target_ptr);
+bool is_whitespace(char c);
+bool is_line_empty(char* line);
+
+
 bool copy_file_lib(char* source_path, char* target_path) {
     // Open files streams
     FILE *source_ptr = fopen(source_path, "r");

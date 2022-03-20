@@ -5,18 +5,23 @@ C_OPT=-O0
 # Compiler flags
 C_FLAGS=-Wall -Wextra -Werror -std=gnu11 -g $(C_OPT)
 
-# Library name
-LIB_NAME=libcopylib
+# Libraries names
+COPY_LIB_NAME=copylib
+COPY_SYS_NAME=copysys
 
 # Targets names
-TARGETS=static
+TARGETS=$(COPY_LIB_NAME)_static $(COPY_SYS_NAME)_static
 
 
 all: $(TARGETS)
 
-static:
-	$(CC) $(C_FLAGS) -c $(LIB_NAME).c
-	ar rcs $(LIB_NAME).a $(LIB_NAME).o
+$(COPY_LIB_NAME)_static:
+	$(CC) $(C_FLAGS) -c lib$(COPY_LIB_NAME).c
+	ar rcs lib$(COPY_LIB_NAME).a lib$(COPY_LIB_NAME).o
+
+$(COPY_SYS_NAME)_static:
+	$(CC) $(C_FLAGS) -c lib$(COPY_SYS_NAME).c
+	ar rcs lib$(COPY_SYS_NAME).a lib$(COPY_SYS_NAME).o
 
 clean:
 	rm -f *.o
