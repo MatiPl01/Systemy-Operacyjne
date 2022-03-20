@@ -5,17 +5,17 @@
 #include "libcopylib.h"
 
 
-int get_line_length(FILE* f_ptr);
-char* find_next_line(FILE* f_ptr);
-char* read_line(FILE* f_ptr);
-bool write_file(FILE* f_ptr, char* line);
-bool reached_EOF(FILE* f_ptr);
-bool copy_file_helper(FILE *source_ptr, FILE *target_ptr);
-bool is_whitespace(char c);
-bool is_line_empty(char* line);
+static int get_line_length(FILE* f_ptr);
+static char* find_next_line(FILE* f_ptr);
+static char* read_line(FILE* f_ptr);
+static bool write_file(FILE* f_ptr, char* line);
+static bool reached_EOF(FILE* f_ptr);
+static bool copy_file_helper(FILE *source_ptr, FILE *target_ptr);
+static bool is_whitespace(char c);
+static bool is_line_empty(char* line);
 
 
-bool copy_file_lib(char* source_path, char* target_path) {
+bool copy_file(char* source_path, char* target_path) {
     // Open files streams
     FILE *source_ptr = fopen(source_path, "r");
     FILE *target_ptr = fopen(target_path, "w");
@@ -44,7 +44,7 @@ bool copy_file_lib(char* source_path, char* target_path) {
     return true;
 }
 
-bool copy_file_helper(FILE *source_ptr, FILE *target_ptr) {
+static bool copy_file_helper(FILE *source_ptr, FILE *target_ptr) {
     char* line = find_next_line(source_ptr);
     // Return true if reached the end of file or false when an error occurred
     if (line == NULL) return reached_EOF(source_ptr);
@@ -69,7 +69,7 @@ bool copy_file_helper(FILE *source_ptr, FILE *target_ptr) {
     return true;
 }
 
-bool write_file(FILE* f_ptr, char* text) {
+static bool write_file(FILE* f_ptr, char* text) {
     int length = strlen(text);
     int written_length = fwrite(text, sizeof(char), length, f_ptr);
 
@@ -80,7 +80,7 @@ bool write_file(FILE* f_ptr, char* text) {
     return true;
 }
 
-int get_line_length(FILE* f_ptr) {
+static int get_line_length(FILE* f_ptr) {
     // Return -1 if reached the end of a file
     if (reached_EOF(f_ptr)) return -1;
 
@@ -100,7 +100,7 @@ int get_line_length(FILE* f_ptr) {
     return length;
 }
 
-bool reached_EOF(FILE* f_ptr) {
+static bool reached_EOF(FILE* f_ptr) {
     int curr_pos = ftell(f_ptr);
     fseek(f_ptr, 0, SEEK_END);
     int end_pos = ftell(f_ptr);
@@ -108,7 +108,7 @@ bool reached_EOF(FILE* f_ptr) {
     return curr_pos == end_pos;
 }
 
-char* read_line(FILE* f_ptr) {
+static char* read_line(FILE* f_ptr) {
     int length = get_line_length(f_ptr);
     // Check if reached the end of a file
     if (length < 0) return NULL;
@@ -132,7 +132,7 @@ char* read_line(FILE* f_ptr) {
     return line;
 }
 
-char* find_next_line(FILE* f_ptr) {
+static char* find_next_line(FILE* f_ptr) {
     while (true) {
         char* line = read_line(f_ptr);
         // Return true if the there are no more lines in a file (line is NULL)
@@ -142,11 +142,11 @@ char* find_next_line(FILE* f_ptr) {
     }
 }
 
-bool is_whitespace(char c) {
+static bool is_whitespace(char c) {
     return c == ' ' || c == '\t' || c == '\n' || c == '\r';
 }
 
-bool is_line_empty(char* line) {
+static bool is_line_empty(char* line) {
     for (int i = 0; i < (int) strlen(line); i++) {
         if (!is_whitespace(line[i])) return false;
     }

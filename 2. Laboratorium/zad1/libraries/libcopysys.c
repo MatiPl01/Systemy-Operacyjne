@@ -7,18 +7,18 @@
 #include "libcopysys.h"
 
 
-int get_file_size(int fd);
-int get_cursor_pos(int fd);
-bool copy_file_helper(int source_fd, int target_fd);
-int get_line_length(int fd);
-char next_char(int fd);
-char* read_line(int fd);
-bool is_whitespace(char c);
-bool is_line_empty(char* line);
-bool write_file(int fd, char* text);
+static int get_file_size(int fd);
+static int get_cursor_pos(int fd);
+static bool copy_file_helper(int source_fd, int target_fd);
+static int get_line_length(int fd);
+static char next_char(int fd);
+static char* read_line(int fd);
+static bool is_whitespace(char c);
+static bool is_line_empty(char* line);
+static bool write_file(int fd, char* text);
 
 
-bool copy_file_sys(char* source_path, char* target_path) {
+bool copy_file(char* source_path, char* target_path) {
     // Open files
     int source_fd, target_fd;
     source_fd = open(source_path, O_RDONLY);
@@ -48,7 +48,7 @@ bool copy_file_sys(char* source_path, char* target_path) {
     return true;
 }
 
-int get_file_size(int fd) {
+static int get_file_size(int fd) {
     // Get the current cursor position
     int curr_pos = get_cursor_pos(fd);
     // Move the cursor to the end of a file in order to determine
@@ -59,11 +59,11 @@ int get_file_size(int fd) {
     return size;
 }
 
-int get_cursor_pos(int fd) {
+static int get_cursor_pos(int fd) {
     return lseek(fd, 0, SEEK_CUR);
 }
 
-bool copy_file_helper(int source_fd, int target_fd) {
+static bool copy_file_helper(int source_fd, int target_fd) {
     char* line;
     bool is_first_line_written = false;
     int line_length;
@@ -71,6 +71,7 @@ bool copy_file_helper(int source_fd, int target_fd) {
     // Loop till the end of a file is reached
     while ((line_length = get_line_length(source_fd)) > 0) {
         line = read_line(source_fd);
+
         if (line == NULL) return false;
         if (is_line_empty(line)) {
             free(line);
@@ -89,7 +90,7 @@ bool copy_file_helper(int source_fd, int target_fd) {
     return line_length >= 0;
 }
 
-int get_line_length(int fd) {
+static int get_line_length(int fd) {
     int offset = 0;
     char c;
 
@@ -118,7 +119,7 @@ int get_line_length(int fd) {
     return offset - 1;
 }
 
-char next_char(int fd) {
+static char next_char(int fd) {
     char* c = (char*) calloc(1, sizeof(char));
     // Return '\0' character if the next char cannot be read
     if (read(fd, c, 1) < 1) {
@@ -130,7 +131,7 @@ char next_char(int fd) {
     return res;
 }
 
-char* read_line(int fd) {
+static char* read_line(int fd) {
     int length = get_line_length(fd);
     // Check if there is an error
     if (length < 0) return NULL;
@@ -147,23 +148,24 @@ char* read_line(int fd) {
         free(line);
         return NULL;
     }
+    line[length - 1] = '\0';
     // Skip the \n character
     lseek(fd, 1, SEEK_CUR);
     return line;
 }
 
-bool is_whitespace(char c) {
+static bool is_whitespace(char c) {
     return c == ' ' || c == '\t' || c == '\n' || c == '\r';
 }
 
-bool is_line_empty(char* line) {
+static bool is_line_empty(char* line) {
     for (int i = 0; i < (int) strlen(line); i++) {
         if (!is_whitespace(line[i])) return false;
     }
     return true;
 }
 
-bool write_file(int fd, char* text) {
+static bool write_file(int fd, char* text) {
     int length = strlen(text);
     int written_length = write(fd, text, length);
 

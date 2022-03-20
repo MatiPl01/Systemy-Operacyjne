@@ -57,11 +57,11 @@ char next_char(int fd) {
 /*
  * Worse implementation
  */
-int get_line_length(int fd);
-char* read_line(int fd);
-int get_file_size(int fd);
-int get_cursor_pos(int fd);
-bool handle_char_counting(char c, int fd, CountingResult *cr);
+static int get_line_length(int fd);
+static char* read_line(int fd);
+static int get_file_size(int fd);
+static int get_cursor_pos(int fd);
+static bool handle_char_counting(char c, int fd, CountingResult *cr);
 
 
 CountingResult* count_char_in_file(char c, char* path) {
@@ -87,7 +87,15 @@ CountingResult* count_char_in_file(char c, char* path) {
     return cr;
 }
 
-int get_file_size(int fd) {
+int count_char_in_line(char c, char* line) {
+    int count = 0;
+    for (int i = 0; i < (int) strlen(line); i++) {
+        if (c == line[i]) count++;
+    }
+    return count;
+}
+
+static int get_file_size(int fd) {
     // Get the current cursor position
     int curr_pos = get_cursor_pos(fd);
     // Move the cursor to the end of a file in order to determine
@@ -98,11 +106,11 @@ int get_file_size(int fd) {
     return size;
 }
 
-int get_cursor_pos(int fd) {
+static int get_cursor_pos(int fd) {
     return lseek(fd, 0, SEEK_CUR);
 }
 
-int get_line_length(int fd) {
+static int get_line_length(int fd) {
     int offset = 0;
     char c;
 
@@ -131,7 +139,7 @@ int get_line_length(int fd) {
     return offset - 1;
 }
 
-char* read_line(int fd) {
+static char* read_line(int fd) {
     int length = get_line_length(fd);
     // Check if there is an error
     if (length < 0) return NULL;
@@ -153,7 +161,7 @@ char* read_line(int fd) {
     return line;
 }
 
-bool handle_char_counting(char c, int fd, CountingResult *cr) {
+static bool handle_char_counting(char c, int fd, CountingResult *cr) {
     char* line;
     int line_length, no_curr, no_all, no_rows;
     no_all = no_rows = 0;
@@ -176,12 +184,4 @@ bool handle_char_counting(char c, int fd, CountingResult *cr) {
 
     // When line_length < 0 there is an error
     return line_length >= 0;
-}
-
-int count_char_in_line(char c, char* line) {
-    int count = 0;
-    for (int i = 0; i < (int) strlen(line); i++) {
-        if (c == line[i]) count++;
-    }
-    return count;
 }

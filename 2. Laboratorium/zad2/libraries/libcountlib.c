@@ -39,9 +39,9 @@
 /*
  * Worse implementation
  */
-int get_line_length(FILE* f_ptr);
-char* read_line(FILE* f_ptr);
-bool handle_char_counting(char c, FILE* f_ptr, CountingResult *cr);
+static int get_line_length(FILE* f_ptr);
+static char* read_line(FILE* f_ptr);
+static bool handle_char_counting(char c, FILE* f_ptr, CountingResult *cr);
 
 
 CountingResult* count_char_in_file(char c, char* path) {
@@ -67,7 +67,15 @@ CountingResult* count_char_in_file(char c, char* path) {
     return cr;
 }
 
-int get_line_length(FILE* f_ptr) {
+int count_char_in_line(char c, char* line) {
+    int count = 0;
+    for (int i = 0; i < (int) strlen(line); i++) {
+        if (c == line[i]) count++;
+    }
+    return count;
+}
+
+static int get_line_length(FILE* f_ptr) {
     int offset = 0;
     char c;
 
@@ -88,7 +96,7 @@ int get_line_length(FILE* f_ptr) {
     return offset - 1;
 }
 
-char* read_line(FILE* f_ptr) {
+static char* read_line(FILE* f_ptr) {
     int length = get_line_length(f_ptr);
     // Check if there is an error
     if (length < 0) return NULL;
@@ -110,7 +118,7 @@ char* read_line(FILE* f_ptr) {
     return line;
 }
 
-bool handle_char_counting(char c, FILE* f_ptr, CountingResult *cr) {
+static bool handle_char_counting(char c, FILE* f_ptr, CountingResult *cr) {
     char* line;
     int line_length, no_curr, no_all, no_rows;
     no_all = no_rows = 0;
@@ -133,12 +141,4 @@ bool handle_char_counting(char c, FILE* f_ptr, CountingResult *cr) {
 
     // When line_length < 0 there is an error
     return line_length >= 0;
-}
-
-int count_char_in_line(char c, char* line) {
-    int count = 0;
-    for (int i = 0; i < (int) strlen(line); i++) {
-        if (c == line[i]) count++;
-    }
-    return count;
 }

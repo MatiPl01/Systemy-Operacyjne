@@ -10,7 +10,7 @@ set(SYS_LIB_NAME libcountsys)
 
 add_executable(${PROJECT_NAME} main.c)
 add_library(${LIB_LIB_NAME} ../libraries/${LIB_LIB_NAME}.c)
-add_library(${SYS_LIB_NAME} ../libraries/${SYS_LIB_NAME}.c)
+#add_library(${SYS_LIB_NAME} ../libraries/${SYS_LIB_NAME}.c)
 
 target_link_libraries(${PROJECT_NAME} ${LIB_LIB_NAME})
-target_link_libraries(${PROJECT_NAME} ${SYS_LIB_NAME})
+#target_link_libraries(${PROJECT_NAME} ${SYS_LIB_NAME})
