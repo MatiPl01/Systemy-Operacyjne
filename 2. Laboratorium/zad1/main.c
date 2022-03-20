@@ -5,7 +5,7 @@
 #define LIB_COPY_LIB "./libraries/libcopylib.h"
 #define LIB_COPY_SYS "./libraries/libcopysys.h"
 
-#ifdef SYS_MODE
+#ifdef LIB_SYS
     #include LIB_COPY_SYS
 #else
     #include LIB_COPY_LIB
@@ -16,6 +16,11 @@ char* get_file_path(int *i, int argc, char* argv[], char* mess);
 
 
 int main(int argc, char* argv[]) {
+    if (argc > 3) {
+        perror("Error: Too many arguments.\n");
+        return 1;
+    }
+
     // Get files paths
     int i = 1;
     char* source_path = get_file_path(&i, argc, argv, "Please provide a source file path");
@@ -29,7 +34,7 @@ int main(int argc, char* argv[]) {
     // Copy a file
     bool is_successful;
 
-    #ifdef SYS_MODE
+    #ifdef LIB_SYS
         is_successful = copy_file_sys(source_path, target_path);
     #else
         is_successful = copy_file_lib(source_path, target_path);

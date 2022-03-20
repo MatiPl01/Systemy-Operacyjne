@@ -15,7 +15,7 @@ COPY_LIB_NAME=copylib
 COPY_SYS_NAME=copysys
 
 # Targets names
-TARGETS=copylib copysys
+TARGETS=$(COPY_LIB_NAME) $(COPY_SYS_NAME)
 
 
 all: $(TARGETS)
@@ -23,14 +23,13 @@ all: $(TARGETS)
 static:
 	make -C $(LIB_DIR) $(LIB_NAME)_static
 
-
-copylib: clean
+$(COPY_LIB_NAME): clean
 	make static LIB_NAME=$(COPY_LIB_NAME)
 	$(CC) $(C_FLAGS) $(COMP_FILE_NAME) -static -l $(COPY_LIB_NAME) -o $(COPY_LIB_NAME)
 
-copysys: clean
+$(COPY_SYS_NAME): clean
 	make static LIB_NAME=$(COPY_SYS_NAME)
-	$(CC) $(C_FLAGS) $(COMP_FILE_NAME) -static -l $(COPY_SYS_NAME) -o $(COPY_SYS_NAME) -D SYS_MODE
+	$(CC) $(C_FLAGS) $(COMP_FILE_NAME) -static -l $(COPY_SYS_NAME) -o $(COPY_SYS_NAME) -D LIB_SYS
 
 clean:
 	rm -f $(COPY_LIB_NAME)

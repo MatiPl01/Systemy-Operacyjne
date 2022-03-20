@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <stdbool.h>
 #include <string.h>
+#include <unistd.h>
 #include <fcntl.h>
 #include "libcopysys.h"
 
@@ -68,7 +68,7 @@ bool copy_file_helper(int source_fd, int target_fd) {
     bool is_first_line_written = false;
     int line_length;
 
-    // Loop till the end of a file ('\n' is counted as a line character)
+    // Loop till the end of a file is reached
     while ((line_length = get_line_length(source_fd)) > 0) {
         line = read_line(source_fd);
         if (line == NULL) return false;
@@ -106,7 +106,7 @@ int get_line_length(int fd) {
             }
             // Otherwise, there is an error
             else {
-                perror("Error: Cannot read a file line.");
+                perror("Error: Cannot read the next character.");
                 return -1;
             }
         }
@@ -132,6 +132,7 @@ char next_char(int fd) {
 
 char* read_line(int fd) {
     int length = get_line_length(fd);
+    // Check if there is an error
     if (length < 0) return NULL;
     char* line = (char*) calloc(length + 1, sizeof(char));
     // Check if allocation was successful
