@@ -128,7 +128,6 @@ char* get_abs_path(char* path) {
     return abs_path;
 }
 
-
 char* get_entity_path(char* dir_path, struct dirent* entity) {
     char* entity_name = entity->d_name;
     // Calculate directory path length without repeated slashes or dots (if not necessary)
@@ -167,12 +166,11 @@ EntityInfo* get_entity_info(char* dir_path, struct dirent* entity) {
     if (entity == NULL) return NULL;
 
     // Create the absolute path
-    char* abs_path = NULL;
-    char* entity_path = get_entity_path(dir_path, entity);
-    if (entity_path != NULL) abs_path = get_abs_path(entity_path);
-    free(entity_path);
-    if (abs_path == NULL) {
-        printf("ERROR NOW: '%s', ('%s')\n", entity_path, dir_path);
+    char* entity_abs_path = NULL;
+    char* dir_abs_path = get_abs_path(dir_path);
+    if (dir_abs_path != NULL) entity_abs_path = get_entity_path(dir_abs_path, entity);
+    free(dir_abs_path);
+    if (entity_abs_path == NULL) {
         perror("Error: Cannot create an absolute path.\n");
         return NULL;
     }
@@ -186,14 +184,14 @@ EntityInfo* get_entity_info(char* dir_path, struct dirent* entity) {
 
     // Create entity stats object
     struct stat sb;
-    if (lstat(abs_path, &sb) == -1) {
+    if (lstat(entity_abs_path, &sb) == -1) {
         perror("Error: Cannot read entity stats.\n");
         return NULL;
     }
 
     // Create the entity info object
     EntityInfo *ei = (EntityInfo*) malloc(sizeof(EntityInfo));
-    ei->abs_path = abs_path;
+    ei->abs_path = entity_abs_path;
     ei->type = type;
     ei->no_links = sb.st_nlink;
     ei->total_size = sb.st_size;
@@ -267,6 +265,7 @@ void print_summary() {
     printf("| Symbolic link: %-10d |\n", global_stats->no_slinks);
     printf("| Sockets: %-16d |\n", global_stats->no_socks);
     for (int i = 0; i < 29; i++) printf("-");
+    printf("\n");
 }
 
 void update_stats(struct dirent* entity) {

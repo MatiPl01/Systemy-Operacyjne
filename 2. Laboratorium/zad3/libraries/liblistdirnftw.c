@@ -126,6 +126,7 @@ void print_summary() {
     printf("| Symbolic link: %-10d |\n", global_stats->no_slinks);
     printf("| Sockets: %-16d |\n", global_stats->no_socks);
     for (int i = 0; i < 29; i++) printf("-");
+    printf("\n");
 }
 
 char* get_entity_type(const struct stat *s) {
