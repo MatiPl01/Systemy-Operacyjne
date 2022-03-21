@@ -3,7 +3,7 @@ CC=gcc
 # Compiler optimization
 C_OPT=-O0
 # Compiler flags
-C_FLAGS=-Wall -Wextra -Werror -std=gnu11 -g $(C_OPT)
+C_FLAGS=-Wall -std=gnu11 -g $(C_OPT)
 
 # Libraries names
 LIST_DIR_STAT_NAME=listdirstat

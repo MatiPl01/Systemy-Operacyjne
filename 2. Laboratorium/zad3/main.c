@@ -22,7 +22,10 @@ int main(int argc, char* argv[]) {
     char* path = get_dir_path(argc, argv);
     if (path == NULL) return 1;
 
-    list_dir(path);
+    if (!list_dir(path)) {
+        perror("Error: Issues while listing the specified directory.\n");
+        return 1;
+    }
 
     free(path);
 

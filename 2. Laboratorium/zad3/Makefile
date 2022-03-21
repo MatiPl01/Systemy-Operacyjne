@@ -5,7 +5,7 @@ LIB_DIR=./libraries
 # Compiler optimization
 C_OPT=-O0
 # Compiler flags
-C_FLAGS=-Wall -Wextra -Werror -std=gnu11 -g -L $(LIB_DIR) $(C_OPT)
+C_FLAGS=-Wall -std=gnu11 -g -L $(LIB_DIR) $(C_OPT)
 
 # Compiled file name
 COMP_FILE_NAME=main.c

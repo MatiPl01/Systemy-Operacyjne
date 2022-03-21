@@ -1,0 +1,36 @@
+=================== Test 1 ===================
+Counted character: a
+Input file: ./files/input-1.txt
+
+Results for countlib:
+Real       System     User      
+0.01       0.00       0.00       
+
+Results for countsys:
+Real       System     User      
+0.24       0.21       0.00       
+
+=================== Test 2 ===================
+Counted character: g
+Input file: ./files/input-2.txt
+
+Results for countlib:
+Real       System     User      
+0.01       0.01       0.00       
+
+Results for countsys:
+Real       System     User      
+1.24       1.21       0.00       
+
+=================== Test 3 ===================
+Counted character: h
+Input file: ./files/input-3.txt
+
+Results for countlib:
+Real       System     User      
+0.07       0.01       0.00       
+
+Results for countsys:
+Real       System     User      
+7.91       7.64       0.00       
+
