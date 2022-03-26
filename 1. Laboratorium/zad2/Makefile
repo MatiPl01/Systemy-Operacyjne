@@ -29,25 +29,25 @@ TARGETS=tests
 all: $(TARGETS)
 
 static:
-	make -C $(LIB_DIR) static
+	@make -C $(LIB_DIR) static
 
 clean:
-	rm -f $(REPORT_PATH)
-	rm -f $(OUT_NAME)
+	@rm -f $(REPORT_PATH)
+	@rm -f $(OUT_NAME)
 
 clean_all: clean
-	make -C $(LIB_DIR) clean_all
+	@make -C $(LIB_DIR) clean_all
 
 $(OUT_NAME): static
-	$(CC) $(C_FLAGS) $(COMP_FILE_NAME) -static -l $(LIB_NAME) -o $(OUT_NAME)
+	@$(CC) $(C_FLAGS) $(COMP_FILE_NAME) -static -l $(LIB_NAME) -o $(OUT_NAME)
 
 report: clean
-	make all DECLARATIONS=MEASURE_TIME=1
-	$(call write_line,"=================== Tests ===================")
-	$(call run_tests,$(OUT_NAME))
+	@make all DECLARATIONS=MEASURE_TIME=1
+	@$(call write_line,"=================== Tests ===================")
+	@$(call run_tests,$(OUT_NAME))
 
 define write_line
-	echo $1 | tee -a $(REPORT_PATH)
+	@echo $1 | tee -a $(REPORT_PATH)
 endef
 
 define run_tests
@@ -59,5 +59,5 @@ endef
 
 define run_test
 	$(call write_line,$3)
-    ./$1 `cat $(INPUT_PATH)/$2.txt | tr '\r\n' ' '` | tee -a $(REPORT_PATH)
+    @./$1 `cat $(INPUT_PATH)/$2.txt | tr '\r\n' ' '` | tee -a $(REPORT_PATH)
 endef

@@ -87,7 +87,7 @@ bool write_file(FILE* f_ptr, char* text);
 
 int main(int argc, char* argv[]) {
     if (argc > 3) {
-        perror("Error: Too many arguments.\n");
+        printf("Error: Too many arguments.\n");
         return 1;
     }
     // Get input arguments
@@ -134,14 +134,14 @@ int main(int argc, char* argv[]) {
         free(times);
         fclose(f_ptr);
         if (!writing_success) {
-            perror("Error: Cannot write to the time measurements file.\n");
+            printf("Error: Cannot write to the time measurements file.\n");
             return 1;
         }
     #endif
 
     // Check if counting operation was successful
     if (cr == NULL) {
-        perror("Error: Cannot perform character counting.\n");
+        printf("Error: Cannot perform character counting.\n");
         return 1;
     }
 
@@ -192,7 +192,7 @@ bool write_file(FILE* f_ptr, char* text) {
     int written_length = (int) fwrite(text, sizeof(char), length, f_ptr);
 
     if (written_length < length) {
-        perror("Error: Cannot write a line to the file.\n");
+        printf("Error: Cannot write a line to the file.\n");
         return false;
     }
     return true;

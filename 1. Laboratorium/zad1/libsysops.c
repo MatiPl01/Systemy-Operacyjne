@@ -150,23 +150,23 @@ char* get_files_stats(char** paths, int no_paths) {
     // Move the cursor to the beginning of a file
     lseek(file_id, 0, SEEK_SET);
     // Create the result string
-    char* result = (char*) calloc(length + 1, sizeof(char));
+    char* block = (char*) calloc(length + 1, sizeof(char));
 
-    if (result == NULL) {
+    if (block == NULL) {
         fprintf(stderr, "Error: failed to allocate memory\n");
         return NULL;
     }
 
-    int read_file_length = (int) read(file_id, result, length);
+    int read_file_length = (int) read(file_id, block, length);
     close(file_id);
     // Something went wrong if a length of the temporary file content,
     // that was read, is lower than the expected length of the file
     if (read_file_length < length) {
-        free(result);
+        free(block);
         return NULL;
     }
 
-    return result;
+    return block;
 }
 
 int calc_cmd_length(char* temp_path, char** paths, int no_paths) {

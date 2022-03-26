@@ -2,8 +2,8 @@
 // Created by mateu on 20.03.2022.
 //
 
-#ifndef LABORATORIA_LIBLISTDIRSTAT_H
-#define LABORATORIA_LIBLISTDIRSTAT_H
+#ifndef LIBLISTDIRSTAT_H
+#define LIBLISTDIRSTAT_H
 
 /*
  * Structs
@@ -68,4 +68,4 @@ char* get_formatted_time(time_t time);
  */
 bool list_dir(char* path);
 
-#endif //LABORATORIA_LIBLISTDIRSTAT_H
+#endif //LIBLISTDIRSTAT_H

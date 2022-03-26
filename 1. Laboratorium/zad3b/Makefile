@@ -31,29 +31,29 @@ TARGETS=$(OUT_PREFIX)static $(OUT_PREFIX)shared $(OUT_PREFIX)dynamic
 all: $(TARGETS)
 
 static:
-	make -C $(LIB_DIR) static C_OPT=-O0
+	@make -C $(LIB_DIR) static C_OPT=-O0
 
 shared:
-	make -C $(LIB_DIR) shared C_OPT=-O0
+	@make -C $(LIB_DIR) shared C_OPT=-O0
 
 clean:
-	rm -f $(REPORT_PATH)
-	rm -f $(OUT_PREFIX)*
+	@rm -f $(REPORT_PATH)
+	@rm -f $(OUT_PREFIX)*
 
 clean_all: clean
-	make -C $(LIB_DIR) clean_all
+	@make -C $(LIB_DIR) clean_all
 
 $(OUT_PREFIX)static: static
-	$(CC) $(C_FLAGS) $(C_OPT) $(COMP_FILE_NAME) -static -l $(LIB_NAME) -o $(OUT_PREFIX)static
+	@$(CC) $(C_FLAGS) $(C_OPT) $(COMP_FILE_NAME) -static -l $(LIB_NAME) -o $(OUT_PREFIX)static
 
 $(OUT_PREFIX)shared: shared
-	$(CC) $(C_FLAGS) $(C_OPT) $(COMP_FILE_NAME) -Wl,-R $(LIB_DIR) -l $(LIB_NAME) -o $(OUT_PREFIX)shared
+	@$(CC) $(C_FLAGS) $(C_OPT) $(COMP_FILE_NAME) -Wl,-R $(LIB_DIR) -l $(LIB_NAME) -o $(OUT_PREFIX)shared
 
 $(OUT_PREFIX)dynamic: shared
-	$(CC) $(C_FLAGS) $(C_OPT) $(COMP_FILE_NAME) -D DYNAMIC_MODE -ldl -o $(OUT_PREFIX)dynamic
+	@$(CC) $(C_FLAGS) $(C_OPT) $(COMP_FILE_NAME) -D DYNAMIC_MODE -ldl -o $(OUT_PREFIX)dynamic
 
 report: clean
-	for OPT in $(C_OPT_LIST); do \
+	@for OPT in $(C_OPT_LIST); do \
   		echo "\nCurrent compiler optimization option: "; \
   		echo $$OPT; \
   		echo ""; \
@@ -78,7 +78,7 @@ define write_header
 endef
 
 define write_line
-	echo $1 | tee -a $(REPORT_PATH)
+	@echo $1 | tee -a $(REPORT_PATH)
 endef
 
 define run_tests_helper
@@ -90,5 +90,5 @@ endef
 
 define run_test
 	$(call write_line,$3)
-    ./$1 `cat $(INPUT_PATH)/$2.txt | tr '\r\n' ' '` | tee -a $(REPORT_PATH)
+    @./$1 `cat $(INPUT_PATH)/$2.txt | tr '\r\n' ' '` | tee -a $(REPORT_PATH)
 endef

@@ -23,7 +23,7 @@ int main(int argc, char* argv[]) {
     if (path == NULL) return 1;
 
     if (!list_dir(path)) {
-        perror("Error: Issues while listing the specified directory.\n");
+        printf("Error: Issues while listing the specified directory.\n");
         return 1;
     }
 

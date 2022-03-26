@@ -15,11 +15,11 @@ TARGETS=$(LIB_NAME)_static
 all: $(TARGETS)
 
 $(LIB_NAME)_static:
-	$(CC) $(C_FLAGS) -c lib$(LIB_NAME).c
-	ar rcs lib$(LIB_NAME).a lib$(LIB_NAME).o
+	@$(CC) $(C_FLAGS) -c lib$(LIB_NAME).c
+	@ar rcs lib$(LIB_NAME).a lib$(LIB_NAME).o
 
 clean:
-	rm -f *.o
+	@rm -f *.o
 
 clean_all: clean
-	rm -f *.a
+	@rm -f *.a

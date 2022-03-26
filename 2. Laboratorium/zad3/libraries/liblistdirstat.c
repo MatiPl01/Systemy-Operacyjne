@@ -158,7 +158,7 @@ int calc_trimmed_dir_path_length(char* dir_path, char* entity_name) {
         }
         return 0;
     }
-    perror("Error: Cannot trim the directory path.\n");
+    fprintf(stderr, "Error: Cannot trim the directory path.\n");
     return -1;
 }
 
@@ -171,14 +171,14 @@ EntityInfo* get_entity_info(char* dir_path, struct dirent* entity) {
     if (dir_abs_path != NULL) entity_abs_path = get_entity_path(dir_abs_path, entity);
     free(dir_abs_path);
     if (entity_abs_path == NULL) {
-        perror("Error: Cannot create an absolute path.\n");
+        fprintf(stderr, "Error: Cannot create an absolute path.\n");
         return NULL;
     }
 
     // Get a type of the entity
     char* type = get_entity_type(entity);
     if (type == NULL) {
-        perror("Error: Cannot recognize a type of the entity.\n");
+        fprintf(stderr, "Error: Cannot recognize a type of the entity.\n");
         return NULL;
     }
 

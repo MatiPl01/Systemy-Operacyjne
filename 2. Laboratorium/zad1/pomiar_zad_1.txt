@@ -8,7 +8,7 @@ Real       System     User
 
 Results for copysys:
 Real       System     User      
-0.01       0.00       0.00       
+0.01       0.01       0.00       
 
 =================== Test 2 ===================
 Input file: ./files/input-2.txt
@@ -16,11 +16,11 @@ Output file: ./files/output-2.txt
 
 Results for copylib:
 Real       System     User      
-0.02       0.00       0.00       
+0.02       0.01       0.00       
 
 Results for copysys:
 Real       System     User      
-0.45       0.44       0.00       
+0.45       0.43       0.00       
 
 =================== Test 3 ===================
 Input file: ./files/input-3.txt
@@ -28,11 +28,11 @@ Output file: ./files/output-3.txt
 
 Results for copylib:
 Real       System     User      
-0.02       0.03       0.00       
+0.02       0.02       0.00       
 
 Results for copysys:
 Real       System     User      
-0.03       0.03       0.00       
+0.04       0.03       0.00       
 
 =================== Test 4 ===================
 Input file: ./files/input-4.txt
@@ -40,9 +40,9 @@ Output file: ./files/output-4.txt
 
 Results for copylib:
 Real       System     User      
-0.10       0.09       0.00       
+0.11       0.07       0.00       
 
 Results for copysys:
 Real       System     User      
-0.76       0.75       0.00       
+0.77       0.76       0.00       
 

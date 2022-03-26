@@ -1,6 +1,6 @@
-#ifndef LABORATORIA_LIBPROC_H
-#define LABORATORIA_LIBPROC_H
+#ifndef LIBPROC_H
+#define LIBPROC_H
 
 void create_processes(int n);
 
-#endif //LABORATORIA_LIBPROC_H
+#endif //LIBPROC_H

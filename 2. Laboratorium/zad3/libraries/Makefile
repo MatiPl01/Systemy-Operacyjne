@@ -16,15 +16,15 @@ TARGETS=$(LIST_DIR_STAT_NAME)_static $(LIST_DIR_NFTW_NAME)_static
 all: $(TARGETS)
 
 $(LIST_DIR_STAT_NAME)_static:
-	$(CC) $(C_FLAGS) -c lib$(LIST_DIR_STAT_NAME).c
-	ar rcs lib$(LIST_DIR_STAT_NAME).a lib$(LIST_DIR_STAT_NAME).o
+	@$(CC) $(C_FLAGS) -c lib$(LIST_DIR_STAT_NAME).c
+	@ar rcs lib$(LIST_DIR_STAT_NAME).a lib$(LIST_DIR_STAT_NAME).o
 
 $(LIST_DIR_NFTW_NAME)_static:
-	$(CC) $(C_FLAGS) -c lib$(LIST_DIR_NFTW_NAME).c
-	ar rcs lib$(LIST_DIR_NFTW_NAME).a lib$(LIST_DIR_NFTW_NAME).o
+	@$(CC) $(C_FLAGS) -c lib$(LIST_DIR_NFTW_NAME).c
+	@ar rcs lib$(LIST_DIR_NFTW_NAME).a lib$(LIST_DIR_NFTW_NAME).o
 
 clean:
-	rm -f *.o
+	@rm -f *.o
 
 clean_all:
-	rm -f *.o *.a
+	@rm -f *.o *.a

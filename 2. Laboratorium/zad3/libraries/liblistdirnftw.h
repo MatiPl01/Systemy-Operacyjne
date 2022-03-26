@@ -2,8 +2,8 @@
 // Created by mateu on 20.03.2022.
 //
 
-#ifndef LABORATORIA_LIBLISTDIRNFTW_H
-#define LABORATORIA_LIBLISTDIRNFTW_H
+#ifndef LIBLISTDIRNFTW_H
+#define LIBLISTDIRNFTW_H
 
 /*
  * Structs
@@ -45,4 +45,4 @@ bool list_dir(char* path);
  */
 char* get_formatted_time(time_t time);
 
-#endif //LABORATORIA_LIBLISTDIRNFTW_H
+#endif //LIBLISTDIRNFTW_H

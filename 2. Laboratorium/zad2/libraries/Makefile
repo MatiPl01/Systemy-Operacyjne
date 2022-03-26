@@ -16,15 +16,15 @@ TARGETS=$(COUNT_LIB_NAME)_static $(COUNT_SYS_NAME)_static
 all: $(TARGETS)
 
 $(COUNT_LIB_NAME)_static:
-	$(CC) $(C_FLAGS) -c lib$(COUNT_LIB_NAME).c
-	ar rcs lib$(COUNT_LIB_NAME).a lib$(COUNT_LIB_NAME).o
+	@$(CC) $(C_FLAGS) -c lib$(COUNT_LIB_NAME).c
+	@ar rcs lib$(COUNT_LIB_NAME).a lib$(COUNT_LIB_NAME).o
 
 $(COUNT_SYS_NAME)_static:
-	$(CC) $(C_FLAGS) -c lib$(COUNT_SYS_NAME).c
-	ar rcs lib$(COUNT_SYS_NAME).a lib$(COUNT_SYS_NAME).o
+	@$(CC) $(C_FLAGS) -c lib$(COUNT_SYS_NAME).c
+	@ar rcs lib$(COUNT_SYS_NAME).a lib$(COUNT_SYS_NAME).o
 
 clean:
-	rm -f *.o
+	@rm -f *.o
 
 clean_all:
-	rm -f *.o *.a
+	@rm -f *.o *.a

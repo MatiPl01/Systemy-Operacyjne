@@ -17,15 +17,15 @@ TARGETS=static shared
 all: $(TARGETS)
 
 static:
-	$(CC) $(C_FLAGS) -c $(LIB_NAME).c
-	ar rcs $(LIB_NAME).a $(LIB_NAME).o
+	@$(CC) $(C_FLAGS) -c $(LIB_NAME).c
+	@ar rcs $(LIB_NAME).a $(LIB_NAME).o
 
 shared:
-	$(CC) $(C_FLAGS) -fPIC -c $(LIB_NAME).c
-	$(CC) $(C_FLAGS) -fPIC -shared $(LIB_NAME).o -o $(LIB_NAME).so
+	@$(CC) $(C_FLAGS) -fPIC -c $(LIB_NAME).c
+	@$(CC) $(C_FLAGS) -fPIC -shared $(LIB_NAME).o -o $(LIB_NAME).so
 
 clean:
-	rm -f *.o
+	@rm -f *.o
 
 clean_all:
-	rm -f *.o *.a *.so
+	@rm -f *.o *.a *.so

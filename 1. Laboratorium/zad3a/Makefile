@@ -29,29 +29,29 @@ TARGETS=$(OUT_PREFIX)static $(OUT_PREFIX)shared $(OUT_PREFIX)dynamic
 all: $(TARGETS)
 
 static:
-	make -C $(LIB_DIR) static
+	@make -C $(LIB_DIR) static
 
 shared:
-	make -C $(LIB_DIR) shared
+	@make -C $(LIB_DIR) shared
 
 clean:
-	rm -f $(REPORT_PATH)
-	rm -f $(OUT_PREFIX)*
+	@rm -f $(REPORT_PATH)
+	@rm -f $(OUT_PREFIX)*
 
 clean_all: clean
-	make -C $(LIB_DIR) clean_all
+	@make -C $(LIB_DIR) clean_all
 
 $(OUT_PREFIX)static: static
-	$(CC) $(C_FLAGS) $(COMP_FILE_NAME) -static -l $(LIB_NAME) -o $(OUT_PREFIX)static
+	@$(CC) $(C_FLAGS) $(COMP_FILE_NAME) -static -l $(LIB_NAME) -o $(OUT_PREFIX)static
 
 $(OUT_PREFIX)shared: shared
-	$(CC) $(C_FLAGS) $(COMP_FILE_NAME) -Wl,-R $(LIB_DIR) -l $(LIB_NAME) -o $(OUT_PREFIX)shared
+	@$(CC) $(C_FLAGS) $(COMP_FILE_NAME) -Wl,-R $(LIB_DIR) -l $(LIB_NAME) -o $(OUT_PREFIX)shared
 
 $(OUT_PREFIX)dynamic: shared
-	$(CC) $(C_FLAGS) $(COMP_FILE_NAME) -D DYNAMIC_MODE -ldl -o $(OUT_PREFIX)dynamic
+	@$(CC) $(C_FLAGS) $(COMP_FILE_NAME) -D DYNAMIC_MODE -ldl -o $(OUT_PREFIX)dynamic
 
 report: clean
-	make all DECLARATIONS=MEASURE_TIME=0
+	@make all DECLARATIONS=MEASURE_TIME=0
 	$(call write_line,"============ Static library tests ===========")
 	$(call run_tests,$(OUT_PREFIX)static)
 	$(call write_line,"\n============ Shared library tests ===========")
@@ -60,7 +60,7 @@ report: clean
 	$(call run_tests,$(OUT_PREFIX)dynamic)
 
 define write_line
-	echo $1 | tee -a $(REPORT_PATH)
+	@echo $1 | tee -a $(REPORT_PATH)
 endef
 
 define run_tests
@@ -72,5 +72,5 @@ endef
 
 define run_test
 	$(call write_line,$3)
-    ./$1 `cat $(INPUT_PATH)/$2.txt | tr '\r\n' ' '` | tee -a $(REPORT_PATH)
+    @./$1 `cat $(INPUT_PATH)/$2.txt | tr '\r\n' ' '` | tee -a $(REPORT_PATH)
 endef

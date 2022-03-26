@@ -21,14 +21,14 @@ TARGETS=$(OUT_FILE)
 all: clean_all $(TARGETS)
 
 static:
-	make -C $(LIB_DIR) $(LIB_NAME)_static
+	@make -C $(LIB_DIR) $(LIB_NAME)_static
 
 $(OUT_FILE):
-	make static LIB_NAME=$(LIB_NAME)
-	$(CC) $(C_FLAGS) $(COMP_FILE_NAME) -static -l $(LIB_NAME) -o $(OUT_FILE)
+	@make static LIB_NAME=$(LIB_NAME)
+	@$(CC) $(C_FLAGS) $(COMP_FILE_NAME) -static -l $(LIB_NAME) -o $(OUT_FILE)
 
 clean:
-	rm -f $(OUT_FILE)
+	@rm -f $(OUT_FILE)
 
 clean_all: clean
-	make -C $(LIB_DIR) clean_all
+	@make -C $(LIB_DIR) clean_all

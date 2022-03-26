@@ -37,7 +37,7 @@ bool copy_file(char* source_path, char* target_path) {
 
     // CHeck if copy operation was successfull
     if (!is_successful) {
-        perror("Error: Cannot copy a file.\n");
+        printf("Error: Cannot copy a file.\n");
         return false;
     }
 
@@ -74,7 +74,7 @@ static bool write_file(FILE* f_ptr, char* text) {
     int written_length = fwrite(text, sizeof(char), length, f_ptr);
 
     if (written_length < length) {
-        perror("Error: Cannot write a line to the file.\n");
+        printf("Error: Cannot write a line to the file.\n");
         return false;
     }
     return true;
@@ -122,7 +122,7 @@ static char* read_line(FILE* f_ptr) {
     // Read a line from the file
     int read_length = fread(line, sizeof(char), length, f_ptr);
     if (read_length < length) {
-        perror("Error: Cannot read a line from a file.\n");
+        printf("Error: Cannot read a line from a file.\n");
         free(line);
         return NULL;
     }

@@ -78,7 +78,7 @@ CountingResult* count_char_in_file(char c, char* path) {
 
     // CHeck if counting operation was successful
     if (!is_successful) {
-        perror("Error: Cannot copy a file.\n");
+        printf("Error: Cannot copy a file.\n");
         return NULL;
     }
 
@@ -127,7 +127,7 @@ static int get_line_length(int fd) {
             }
             // Otherwise, there is an error
             else {
-                perror("Error: Cannot read the next character.");
+                printf("Error: Cannot read the next character.");
                 return -1;
             }
         }
@@ -152,7 +152,7 @@ static char* read_line(int fd) {
     // Read a line from the file
     int read_length = (int) read(fd, line, length);
     if (read_length < length) {
-        perror("Error: Cannot read a line from a file.\n");
+        printf("Error: Cannot read a line from a file.\n");
         free(line);
         return NULL;
     }

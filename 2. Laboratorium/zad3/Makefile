@@ -21,20 +21,20 @@ TARGETS=$(LIST_DIR_STAT_NAME) $(LIST_DIR_NFTW_NAME)
 all: clean $(TARGETS)
 
 static:
-	make -C $(LIB_DIR) $(LIB_NAME)_static
+	@make -C $(LIB_DIR) $(LIB_NAME)_static
 
 $(LIST_DIR_STAT_NAME):
-	rm -f $(LIST_DIR_STAT_NAME)
-	make static LIB_NAME=$(LIST_DIR_STAT_NAME)
-	$(CC) $(C_FLAGS) $(COMP_FILE_NAME) -static -l $(LIST_DIR_STAT_NAME) -o $(LIST_DIR_STAT_NAME)
+	@rm -f $(LIST_DIR_STAT_NAME)
+	@make static LIB_NAME=$(LIST_DIR_STAT_NAME)
+	@$(CC) $(C_FLAGS) $(COMP_FILE_NAME) -static -l $(LIST_DIR_STAT_NAME) -o $(LIST_DIR_STAT_NAME)
 
 $(LIST_DIR_NFTW_NAME):
-	rm -f $(LIST_DIR_NFTW_NAME)
-	make static LIB_NAME=$(LIST_DIR_NFTW_NAME)
-	$(CC) $(C_FLAGS) $(COMP_FILE_NAME) -static -l $(LIST_DIR_NFTW_NAME) -o $(LIST_DIR_NFTW_NAME) -D LIB_NFTW
+	@rm -f $(LIST_DIR_NFTW_NAME)
+	@make static LIB_NAME=$(LIST_DIR_NFTW_NAME)
+	@$(CC) $(C_FLAGS) $(COMP_FILE_NAME) -static -l $(LIST_DIR_NFTW_NAME) -o $(LIST_DIR_NFTW_NAME) -D LIB_NFTW
 
 clean:
-	rm -f $(LIST_DIR_STAT_NAME) $(LIST_DIR_NFTW_NAME)
+	@rm -f $(LIST_DIR_STAT_NAME) $(LIST_DIR_NFTW_NAME)
 
 clean_all: clean
-	make -C $(LIB_DIR) clean_all
+	@make -C $(LIB_DIR) clean_all

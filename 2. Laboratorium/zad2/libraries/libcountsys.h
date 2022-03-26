@@ -1,5 +1,5 @@
-#ifndef LABORATORIA_COUNTSYS_H
-#define LABORATORIA_COUNTSYS_H
+#ifndef COUNTSYS_H
+#define COUNTSYS_H
 
 typedef struct {
     int no_all;
@@ -10,4 +10,4 @@ CountingResult* count_char_in_file(char c, char* path);
 
 int count_char_in_line(char c, char* line);
 
-#endif //LABORATORIA_COUNTSYS_H
+#endif //COUNTSYS_H
