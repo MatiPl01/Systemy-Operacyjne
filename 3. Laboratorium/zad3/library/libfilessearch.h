@@ -1,0 +1,5 @@
+#ifndef LIBFILESSEARCH_H
+#define LIBFILESSEARCH_H
+
+
+#endif // LIBFILESSEARCH_H

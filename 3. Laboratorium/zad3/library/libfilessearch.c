@@ -1,5 +1,2 @@
-#ifndef LIBFILESSEARCH_H
-#define LIBFILESSEARCH_H
+#include "libfilessearch.h"
 
-
-#endif // LIBFILESSEARCH_H
