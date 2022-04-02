@@ -1,2 +1,0 @@
-Real       System     User      
-0.00       0.00       0.00       

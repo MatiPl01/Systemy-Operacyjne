@@ -1,0 +1,64 @@
+**********
+fork tests
+**********
+
+=========== Action: 'ignore' ===========
+v Parent process:
+Raising a signal '10'.
+	v Child process
+Raising a signal '10'.
+	^ End of child process
+^ End of parent process
+
+========== Action: 'handler' ===========
+v Parent process:
+Raising a signal '10'.
+Handler received signal 10. PID: 2044, PPID: 2043
+	v Child process
+Raising a signal '10'.
+Handler received signal 10. PID: 2046, PPID: 2044
+	^ End of child process
+^ End of parent process
+
+============ Action: 'mask' ============
+v Parent process:
+Raising a signal '10'.
+	v Child process
+Raising a signal '10'.
+	^ End of child process
+^ End of parent process
+
+========== Action: 'pending' ===========
+v Parent process:
+Raising a signal '10'.
+	v Child process
+Signal 10 is not pending.
+	^ End of child process
+^ End of parent process
+
+
+**********
+exec tests
+**********
+
+=========== Action: 'ignore' ===========
+v Parent process:
+Raising a signal '10'.
+	v Child process
+Raising a signal '10'.
+	^ End of a child process
+
+============ Action: 'mask' ============
+v Parent process:
+Raising a signal '10'.
+	v Child process
+Raising a signal '10'.
+	^ End of a child process
+
+========== Action: 'pending' ===========
+v Parent process:
+Raising a signal '10'.
+	v Child process
+Signal 10 is pending.
+	^ End of a child process
+
