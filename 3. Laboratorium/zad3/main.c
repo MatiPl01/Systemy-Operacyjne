@@ -37,7 +37,7 @@ char* get_input_string(int *i, int argc, char* argv[], char* msg) {
 
     // Otherwise, get an input from a user
     printf("%s\n>>> ", msg);
-    char* line;
+    char* line = "";
     size_t length = 0;
     getline(&line, &length, stdin);
     // Remove the newline character
