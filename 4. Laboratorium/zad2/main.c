@@ -10,6 +10,7 @@
 #define NOCLDSTOP_TEST_NAME "NOCLDSTOP"
 #define RESETHAND_TEST_NAME "RESETHAND"
 
+int send_signal(int pid, int sig_no);
 int run_test(char* test_name);
 int test_SA_SIGINFO(void);
 int test_SA_SIGINFO_child_fn(void);
@@ -52,6 +53,14 @@ int main(int argc, char* argv[]) {
 }
 
 
+int send_signal(int pid, int sig_no) {
+    if (kill(pid, sig_no) == -1) {
+        perror("Unable to send signal.\n");
+        return -1;
+    }
+    return 0;
+}
+
 int run_test(char* test_name) {
     if (strcmp(test_name, SIGINFO_TEST_NAME) == 0) {
         return test_SA_SIGINFO();
@@ -84,7 +93,7 @@ int test_SA_SIGINFO_child_fn(void) {
     // Set sigaction in the child process
     if (set_sa_sigaction(SIGINT, 0, handle_child_SIGINT_SIGINFO) == -1) exit(1);
     // Send the SIGINT signal to the parent process
-    kill(getppid(), SIGINT);
+    if (send_signal(getppid(), SIGINT) == -1) return -1;
     // Pause the child process
     pause(); // This will wait for a signal of any type
     return 0;
@@ -98,7 +107,7 @@ int test_SA_SIGINFO_parent_fn(int pid) {
 void handle_parent_SIGINT_SIGINFO(int sig_no, siginfo_t *info, void *ucontext) {
     puts("\nHandling SIGINT in a parent");
     print_info(sig_no, info);
-    kill(info->si_pid, SIGINT);
+    send_signal(info->si_pid, SIGINT);
 }
 
 void handle_parent_SIGCHLD_SIGINFO(int sig_no, siginfo_t *info, void *ucontext) {
@@ -151,7 +160,7 @@ int test_SA_NOCLDSTOP_child_fn(void) {
 int test_SA_NOCLDSTOP_parent_fn_1(int child_pid) {
     printf("\nSending SIGSTOP to the child process with PID %d (PPID: %d).\n", child_pid, getpid());
     puts("Parent process should receive SIGCHLD");
-    kill(child_pid, SIGSTOP);
+    if (send_signal(child_pid, SIGSTOP) == -1) return -1;
     wait(NULL);
     return 0;
 }
@@ -159,7 +168,7 @@ int test_SA_NOCLDSTOP_parent_fn_1(int child_pid) {
 int test_SA_NOCLDSTOP_parent_fn_2(int child_pid) {
     printf("\nSending SIGSTOP to the child process with PID %d (PPID: %d).\n", child_pid, getpid());
     puts("Parent process should NOT receive SIGCHLD");
-    kill(child_pid, SIGSTOP);
+    if (send_signal(child_pid, SIGSTOP) == -1) return -1;
     return 0;
 }
 
@@ -200,7 +209,7 @@ int test_SA_RESETHAND_child_fn(void) {
 int test_SA_RESETHAND_parent_fn_1(int child_pid) {
     printf("\nSending SIGKILL to the child process with PID %d (PPID: %d).\n", child_pid, getpid());
     puts("Parent process should IGNORE SIGCHLD");
-    kill(child_pid, SIGKILL);
+    if (send_signal(child_pid, SIGKILL) == -1) return -1;
     wait(NULL);
     return 0;
 }
@@ -208,7 +217,7 @@ int test_SA_RESETHAND_parent_fn_1(int child_pid) {
 int test_SA_RESETHAND_parent_fn_2(int child_pid) {
     printf("\nSending SIGKILL to the child process with PID %d (PPID: %d).\n", child_pid, getpid());
     puts("Parent process should HANDLE SIGCHLD");
-    kill(child_pid, SIGKILL);
+    if (send_signal(child_pid, SIGKILL) == -1) return -1;
     wait(NULL);
     return 0;
 }

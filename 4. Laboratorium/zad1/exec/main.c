@@ -35,7 +35,7 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    // If everything succeeds, a code after the if statement above
+    // If everything succeeds, code after the if statement above
     // won't be executed, so I skip the return statement
 }
 
@@ -114,10 +114,14 @@ int handle_pending_action(int sig_no) {
 
 int setup_sigaction(int sig_no, void (*handler)(int)) {
     struct sigaction *sa = (struct sigaction*) calloc(1, sizeof(struct sigaction));
+    if (!sa) {
+        perror("Unable to allocate memory.\n");
+        return -1;
+    }
     sa->sa_handler = handler;
     sa->sa_flags = SA_RESTART;
 
-    if (sigaction(sig_no, sa, NULL) == 1) {
+    if (sigaction(sig_no, sa, NULL) == -1) {
         perror("Action cannot be set for the signal.\n");
         return -1;
     }
