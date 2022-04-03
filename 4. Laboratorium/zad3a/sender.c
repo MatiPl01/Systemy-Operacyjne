@@ -16,6 +16,8 @@
 
 int received_signals_count = 0;
 int sent_signals_count = 0;
+int target_signal;
+int stop_signal;
 char* mode = "";
 
 char* get_input_string(int *i, int argc, char* argv[], char* msg);
@@ -25,6 +27,7 @@ int send_signal(int sig_no, pid_t catcher_PID);
 int set_sa_sigaction(int sig_no, int sa_flags, void (*handler)(int, siginfo_t*, void*));
 int set_sa_handler(int sig_no, int sa_flags, void (*handler)(int));
 int set_up_signal_handlers(void);
+void set_signal_numbers(void);
 void target_signal_handler(int sig_no, siginfo_t *info, void *ucontext);
 void stop_signal_handler(int sig_no);
 
@@ -48,6 +51,7 @@ int main(int argc, char* argv[]) {
     }
 
     mode = get_input_string(&i, argc, argv, "Please provide a sending signals mode");
+    set_signal_numbers();
 
     // Display settings
     printf("Sender (PID: %d):\n", getpid());
@@ -57,14 +61,19 @@ int main(int argc, char* argv[]) {
     printf("\tMode:              %s\n\n", mode);
 
     // Set up signal handlers
-    if (set_up_signal_handlers() == -1) return 1;
-
-    // Send signals to the catcher
-    if (send_signals(catcher_PID, signals_count) == -1) return 1;
-    printf("\n");
+    if (set_up_signal_handlers() == -1 ||
+        // Send signals to the catcher
+        send_signals(catcher_PID, signals_count) == -1)
+    {
+        if (argc < 4) free(mode);
+        return 1;
+    }
 
     pause(); // Wait for a signal from the catcher process
     printf("\nI've also finished! Thank you CATCHER for good cooperation ❤.\n");
+    puts("Here are my statistics:");
+    printf("Total number of signals sent:     %d\n", sent_signals_count);
+    printf("Total number of signals received: %d\n", received_signals_count);
 
     return 0;
 }
@@ -86,17 +95,20 @@ char* get_input_string(int *i, int argc, char* argv[], char* msg) {
 
 int get_input_num(int *i, int argc, char* argv[], char* msg) {
     char* str = get_input_string(i, argc, argv, msg);
-    return (int) strtol(str, NULL, 10);
+    int num = (int) strtol(str, NULL, 10);
+    if (*i >= argc) free(str);
+    return num;
 }
 
 int send_signals(pid_t catcher_PID, int signals_count) {
     for (int i = 0; i < signals_count; i++) {
-        printf("Sending %d signal to the CATCHER... (%d/%d sent)\n", TARGET_SIGNAL, i + 1, signals_count);
-        if (send_signal(TARGET_SIGNAL, catcher_PID) == -1) return -1;
+        printf("Sending %d signal to the CATCHER... (%d/%d sent)\n", target_signal, i + 1, signals_count);
+        if (send_signal(target_signal, catcher_PID) == -1) return -1;
     }
 
-    printf("Sending %d signal to the CATCHER...\n", STOP_SIGNAL);
-    if (send_signal(STOP_SIGNAL, catcher_PID) == -1) return -1;
+    printf("Sending %d signal to the CATCHER...\n\n", stop_signal);
+    if (send_signal(stop_signal, catcher_PID) == -1) return -1;
+    sent_signals_count--; // Don't count the STOP_SIGNAL
 
     return 0;
 }
@@ -114,7 +126,7 @@ int send_signal(int sig_no, pid_t catcher_PID) {
             return -1;
         }
     } else if (strcmp(mode, SIGRT_MODE) == 0) {
-        if (kill(catcher_PID, SIGRTMIN + 1) == -1) {
+        if (kill(catcher_PID, sig_no) == -1) {
             perror("Unable to send a signal.\n");
             return -1;
         }
@@ -156,16 +168,6 @@ int set_sa_handler(int sig_no, int sa_flags, void (*handler)(int)) {
 }
 
 int set_up_signal_handlers(void) {
-    int target_signal, stop_signal;
-
-    if (strcmp(mode, SIGRT_MODE) != 0) {
-        target_signal = TARGET_SIGNAL;
-        stop_signal = STOP_SIGNAL;
-    } else {
-        target_signal = SIGRT_TARGET_SIGNAL;
-        stop_signal = SIGRT_STOP_SIGNAL;
-    }
-
     if (set_sa_sigaction(target_signal, SA_SIGINFO, target_signal_handler) == -1 ||
         set_sa_handler(stop_signal, 0, stop_signal_handler) == -1) {
         return -1;
@@ -174,9 +176,19 @@ int set_up_signal_handlers(void) {
     return 0;
 }
 
+void set_signal_numbers(void) {
+    if (strcmp(mode, SIGRT_MODE) != 0) {
+        target_signal = TARGET_SIGNAL;
+        stop_signal = STOP_SIGNAL;
+    } else {
+        target_signal = SIGRT_TARGET_SIGNAL;
+        stop_signal = SIGRT_STOP_SIGNAL;
+    }
+}
+
 void target_signal_handler(int sig_no, siginfo_t *info, void *ucontext) {
     received_signals_count++;
-    printf("Received %d from CATCHER\n", sig_no);
+    printf("Received %d from the CATCHER\n", sig_no);
     printf("Received to sent signals ratio: %d/%d\n", received_signals_count, sent_signals_count);
 
     if (strcmp(mode, SIGQUEUE_MODE) == 0) {
@@ -185,5 +197,5 @@ void target_signal_handler(int sig_no, siginfo_t *info, void *ucontext) {
 }
 
 void stop_signal_handler(int sig_no) {
-    printf("\nReceived %d signal. Total number of received signals: %d.\n\n", sig_no, received_signals_count);
+    printf("\nReceived %d signal\n", sig_no);
 }
