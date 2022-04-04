@@ -81,7 +81,7 @@ int send_signals(pid_t sender_PID, int signals_count) {
 }
 
 int send_signal(pid_t sender_PID, int sig_no, int sent_count) {
-    if (strcmp(mode, KILL_MODE) == 0) {
+    if (strcmp(mode, KILL_MODE) == 0 || strcmp(mode, SIGRT_MODE) == 0) {
         if (kill(sender_PID, sig_no) == -1) {
             perror("Unable to send a signal.\n");
             return -1;
@@ -92,11 +92,6 @@ int send_signal(pid_t sender_PID, int sig_no, int sent_count) {
         if (sent_count > 0) value.sival_int = sent_count;
         if (sigqueue(sender_PID, sig_no, value) == -1) {
             perror("Unable to add a signal to the queue.\n");
-            return -1;
-        }
-    } else if (strcmp(mode, SIGRT_MODE) == 0) {
-        if (kill(sender_PID, sig_no) == -1) {
-            perror("Unable to send a signal.\n");
             return -1;
         }
     } else {

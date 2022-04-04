@@ -114,7 +114,7 @@ int send_signals(pid_t catcher_PID, int signals_count) {
 }
 
 int send_signal(int sig_no, pid_t catcher_PID) {
-    if (strcmp(mode, KILL_MODE) == 0) {
+    if (strcmp(mode, KILL_MODE) == 0 || strcmp(mode, SIGRT_MODE) == 0) {
         if (kill(catcher_PID, sig_no) == -1) {
             perror("Unable to send a signal.\n");
             return -1;
@@ -123,11 +123,6 @@ int send_signal(int sig_no, pid_t catcher_PID) {
         static union sigval value;
         if (sigqueue(catcher_PID, sig_no, value) == -1) {
             perror("Unable to add a signal to the queue.\n");
-            return -1;
-        }
-    } else if (strcmp(mode, SIGRT_MODE) == 0) {
-        if (kill(catcher_PID, sig_no) == -1) {
-            perror("Unable to send a signal.\n");
             return -1;
         }
     } else {
