@@ -25,3 +25,8 @@ The repository solutions for exercises from the Operating Systems course at AGH 
 ### Sygnały
 
 [https://github.com/MatiPl01/Systemy-Operacyjne/tree/main/4. Laboratorium](https://github.com/MatiPl01/Systemy-Operacyjne/tree/main/4.%20Laboratorium)
+
+## Lab 5
+### Potoki nazwane i nienazwane
+
+[https://github.com/MatiPl01/Systemy-Operacyjne/tree/main/5. Laboratorium](https://github.com/MatiPl01/Systemy-Operacyjne/tree/main/5.%20Laboratorium)
