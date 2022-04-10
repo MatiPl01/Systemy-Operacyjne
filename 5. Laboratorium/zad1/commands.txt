@@ -2,6 +2,14 @@ part1 = cat /etc/passwd | wc -l
 part2 = ls | grep '^a'
 part3 = grep 11
 
-part1 | part3
-part1
-part2
+part1 | part4
+
+            part1
+
+part4 = head -1
+part6 = grep "main"
+part10 = ls -a
+
+    part2
+
+part10      |part6|    part4

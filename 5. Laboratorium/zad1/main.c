@@ -32,7 +32,8 @@ int get_command_id(const char* part);
 char*** decode_command(char* line, Command** commands, unsigned *parts_count);
 char** split_pipes(char* line, unsigned *parts_count);
 char* trim_whitespace(char* string);
-bool is_space(const char *string);
+bool is_command_line(const char* string);
+bool is_space(const char* string);
 char** split_args(char* command, unsigned *args_count);
 int exec_command_line(char*** command_line, unsigned parts_count);
 bool check_processes_status(pid_t *pids, unsigned no_processes);
@@ -80,7 +81,7 @@ int exec_commands(FILE *f_ptr) {
     char*** command_line;
 
     while (getline(&line, &line_length, f_ptr) != -1) {
-        if (is_space(line)) continue;
+        if (!is_command_line(line)) continue;
         if (!(command_line = decode_command(line, commands, &parts_count))) {
             free_commands_arr(commands, max_id);
             return -1;
@@ -175,9 +176,8 @@ Node* get_commands_ll(FILE *f_ptr, unsigned *max_num) {
 
     *max_num = 0;
     while (getline(&line, &line_length, f_ptr) != -1) {
-        // Break if a line without = sign was encountered (I assume that all declarations
-        // are preceding lines defining the order of commands execution)
-        if (!strstr(line, DECLARATION_SIGN)) break;
+        // Ship lines that have no declarations
+        if (!strstr(line, DECLARATION_SIGN)) continue;
         // Use strtok_r to get also the remaining part (after = sign)
         if ((command_num = get_command_id(strtok_r(line, DECLARATION_SIGN, &command))) == -1) {
             free(line);
@@ -196,6 +196,7 @@ Node* get_commands_ll(FILE *f_ptr, unsigned *max_num) {
         }
     }
 
+    fseek(f_ptr, 0, SEEK_SET);
     free(line);
     return head;
 }
@@ -316,6 +317,10 @@ bool is_space(const char *string) {
     return true;
 }
 
+bool is_command_line(const char* string) {
+    return !strstr(string, DECLARATION_SIGN) && !is_space(string);
+}
+
 char** split_args(char* command, unsigned *args_count) {
     *args_count = count_args(command);
 
@@ -383,31 +388,45 @@ int exec_command_line(char*** command_line, unsigned parts_count) {
 
         if (pid == 0) {
             if (i > 0) {
-                dup2(prev_fd[READ_FD], STDIN_FILENO);
                 close(prev_fd[WRITE_FD]);
+                if (dup2(prev_fd[READ_FD], STDIN_FILENO) == -1) {
+                    perror("Unable to duplicate a file descriptor.\n");
+                    exit(1);
+                }
                 close(prev_fd[READ_FD]);
             }
             // Duplicate the file descriptor for all processes except the last one
             // (the last process should print the results to the console)
             if (i < parts_count - 1) {
-                dup2(curr_fd[WRITE_FD], STDOUT_FILENO);
                 close(curr_fd[READ_FD]);
+                if (dup2(curr_fd[WRITE_FD], STDOUT_FILENO) == -1) {
+                    perror("Unable to duplicate a file descriptor.\n");
+                    exit(1);
+                }
                 close(curr_fd[WRITE_FD]);
             }
 
-            execvp(command_line[i][0], command_line[i]);
+            if (execvp(command_line[i][0], command_line[i]) == -1) {
+                perror("Issues while executing a command.\n");
+                exit(1);
+            }
             // Exec function only returns there was an exception while executing
             // the specified command
             perror("Unable to execute a command.\n");
             exit(1);
         }
 
-        close(prev_fd[READ_FD]);
-        close(prev_fd[WRITE_FD]);
+        if (i > 0) {
+            close(prev_fd[READ_FD]);
+            close(prev_fd[WRITE_FD]);
+        }
 
-        if (i < parts_count) {
+        if (i < parts_count - 1) {
             prev_fd[READ_FD] = curr_fd[READ_FD];
             prev_fd[WRITE_FD] = curr_fd[WRITE_FD];
+        } else {
+            close(curr_fd[READ_FD]);
+            close(curr_fd[WRITE_FD]);
         }
     }
 
