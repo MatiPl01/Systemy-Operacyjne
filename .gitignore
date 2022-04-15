@@ -132,4 +132,3 @@ dkms.conf
 
 # My files
 tests*
-debug/
