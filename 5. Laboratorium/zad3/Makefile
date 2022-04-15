@@ -3,7 +3,7 @@ CC=gcc
 # Compiler optimization
 C_OPT=-O0
 # Compiler flags
-C_FLAGS=-Wall -std=gnu11 -g $(C_OPT)
+C_FLAGS=-Wall  -std=gnu11 -g $(C_OPT)
 
 # File names
 FILE_NAMES=main consumer producer
