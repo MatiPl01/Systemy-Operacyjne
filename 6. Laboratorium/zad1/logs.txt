@@ -1,0 +1,108 @@
+2022-04-25 09:24:46
+Client id: 0
+Message type: 5
+Message body:
+'1677923631'
+
+2022-04-25 09:24:54
+Client id: 0
+Message type: 5
+Message body:
+'1728255279'
+
+2022-04-25 09:25:02
+Client id: 1
+Message type: 4
+Message body:
+'SADADADAF 2313123'
+
+2022-04-25 09:25:07
+Client id: 0
+Message type: 5
+Message body:
+'1862473007'
+
+2022-04-25 09:25:09
+Client id: 2
+Message type: 2
+Message body:
+''
+
+2022-04-25 09:25:20
+Client id: 0
+Message type: 3
+Message body:
+'Siema wszystkim!'
+
+2022-04-25 09:25:40
+Client id: 1
+Message type: 4
+Message body:
+'No elo!'
+
+2022-04-25 09:25:54
+Client id: 2
+Message type: 4
+Message body:
+'Siema, co tam?'
+
+2022-04-25 09:26:12
+Client id: 1
+Message type: 3
+Message body:
+'Muszę spadać, na razie!'
+
+2022-04-25 09:26:15
+Client id: 1
+Message type: 1
+Message body:
+''
+
+2022-04-25 09:26:22
+Client id: 2
+Message type: 2
+Message body:
+''
+
+2022-04-25 09:26:35
+Client id: 2
+Message type: 4
+Message body:
+'Ej, Ty jesteś jeszcze?'
+
+2022-04-25 09:26:50
+Client id: 0
+Message type: 4
+Message body:
+'Tak, jestem, ale też zaraz spadam.'
+
+2022-04-25 09:27:02
+Client id: 0
+Message type: 1
+Message body:
+''
+
+2022-04-25 09:27:37
+Client id: 2
+Message type: 4
+Message body:
+'Wszyscy mnie opuścili, mę już tylko do siebie pisać.'
+
+2022-04-25 09:27:59
+Client id: 2
+Message type: 4
+Message body:
+'Dobra, też kończę na dziś. Bez sensu tak samemu siedzieć.'
+
+2022-04-25 09:28:33
+Client id: 2
+Message type: 2
+Message body:
+''
+
+2022-04-25 09:28:34
+Client id: 2
+Message type: 1
+Message body:
+''
+

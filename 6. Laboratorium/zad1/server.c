@@ -6,11 +6,14 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <time.h>
+#include <signal.h>
+#include <string.h>
+
+#define MAX_NO_CLIENTS 100
 
 const char PROJ_ID = 'C';
-const char* RES_FILE_PATH = "results.txt";
+const char* RES_FILE_PATH = "logs.txt";
 
-int MAX_NO_CLIENTS = 100;
 int CLIENT_QUEUES[MAX_NO_CLIENTS] = { 0 };
 
 key_t generate_key(void);
@@ -23,7 +26,7 @@ int init_client(char* body);
 int stop_client(int client_id);
 int send_to_one(int receiver_id, int sender_id, char* body);
 int send_to_all(int sender_id, char* body);
-void list_all_active_clients(void);
+int list_all_active_clients(int sender_id) ;
 struct tm* get_time(void);
 int set_sa_handler(int sig_no, int sa_flags, void (*handler)(int));
 void exit_handler(void);
@@ -40,8 +43,11 @@ int main(void) {
     key_t key;
     int queue_id = create_queue(&key);
     if (queue_id == -1) return 3;
-    if (listen(queue_id) == -1) return 4;
-    return 0;
+    printf("Server queue with '%d' key was successfully created.\n", key);
+
+    // The run function will only return if there was some error
+    listen(queue_id);
+    return 4;
 }
 
 
@@ -57,15 +63,16 @@ key_t generate_key() {
 
 int create_queue(key_t *key) {
     if ((*key = generate_key()) == -1) return -1;
-    int queue_id = msgget(*key, IPC_CREAT | IPC_EXCL | 0666);
+    int queue_id = msgget(*key, IPC_CREAT | 0666);
     if (queue_id == -1) {
-        perror("Unable to create a message queue.\n");
+        perror("Unable to create a server message queue.\n");
         return -1;
     }
     return queue_id;
 }
 
 int listen(int queue_id) {
+    printf("Starting listening to clients...\n");
     while (true) {
         if (receive_msg(queue_id) == -1) return -1;
     }
@@ -90,16 +97,16 @@ int handle_msg(msg_buf msg) {
             return init_client(msg.body);
         case STOP:
             printf("Received STOP from %d client.\n", msg.sender_id);
-            return stop_client(msg.receiver_id);
+            return stop_client(msg.sender_id);
         case ALL:
-            printf("Received ALL from %d client.\n", msg.sender_id);
+            printf("Received 2ALL from %d client.\n", msg.sender_id);
             return send_to_all(msg.sender_id, msg.body);
         case ONE:
-            printf("Received ONE from %d client.\n", msg.sender_id);
+            printf("Received 2ONE from %d client.\n", msg.sender_id);
             return send_to_one(msg.receiver_id, msg.sender_id, msg.body);
         case LIST:
             printf("Received LIST from %d client.\n", msg.sender_id);
-            return list_all_clients();
+            return list_all_active_clients(msg.sender_id);
         default:
             fprintf(stderr, "Unrecognized message type '%ld'.\n", msg.type);
             return -1;
@@ -125,7 +132,7 @@ int save_msg(msg_buf msg) {
 
     struct tm *local_time = get_time();
 
-    if (fprintf(f_ptr, "%d-%02d-%02d %02d:%02d:%02d\nClient id: %d\nMessage:\n%s\n\n",
+    if (fprintf(f_ptr, "%d-%02d-%02d %02d:%02d:%02d\nClient id: %d\nMessage type: %ld\nMessage body:\n'%s'\n\n",
                 local_time->tm_year + 1900,
                 local_time->tm_mon + 1,
                 local_time->tm_mday,
@@ -133,6 +140,7 @@ int save_msg(msg_buf msg) {
                 local_time->tm_min,
                 local_time->tm_sec,
                 msg.sender_id,
+                msg.type,
                 msg.body
     ) < 0) {
         fprintf(stderr, "Unable to write data to a file.\n");
@@ -157,17 +165,19 @@ int init_client(char* body) {
         fprintf(stderr, "Impossible to initialize a new client. The number of possible clients (%d) was exceeded.\n", MAX_NO_CLIENTS);
         return -1;
     }
+    printf("Assigned '%d' id to the new client.\n", id);
 
-    key_t key = (key_t) strtol(body, NULL, 10);
-    if ((CLIENT_QUEUES[id] = msgget(key, 0)) == -1) {
+    key_t client_key = (key_t) strtol(body, NULL, 10);
+    if ((CLIENT_QUEUES[id] = msgget(client_key, 0)) == -1) {
         perror("Unable to get a client queue identifier.\n");
         return -1;
     }
 
     msg_buf msg = {
-        .type = INIT;
+            .type = INIT
     };
     sprintf(msg.body, "%d", id);
+    printf("Client queue with key '%d' was found.\n", client_key);
 
     if (msgsnd(CLIENT_QUEUES[id], &msg, MSG_SIZE, 0) == -1) {
         perror("Unable to send a response to the client.\n");
@@ -182,6 +192,8 @@ int stop_client(int client_id) {
         fprintf(stderr, "Cannot stop a client. There is no client with id '%d'.\n", client_id);
     }
     CLIENT_QUEUES[client_id] = 0;
+
+    printf("Stop message was successfully sent to '%d'.\n", client_id);
     return 0;
 }
 
@@ -192,21 +204,19 @@ int send_to_one(int receiver_id, int sender_id, char* body) {
     }
 
     msg_buf msg = {
-        .type = ONE,
-        .sender_id = sender_id,
-        .receiver_id = receiver_id;
+            .type = ONE,
+            .sender_id = sender_id,
+            .receiver_id = receiver_id,
+            .send_time = time(NULL)
     };
     strcpy(msg.body, body);
-
-    struct tm* msg_time = get_time();
-    if (!msg_time) return -1;
-    msg.send_time = msg_time;
 
     if (msgsnd(CLIENT_QUEUES[receiver_id], &msg, MSG_SIZE, 0) == -1) {
         perror("Unable to send a message to the receiver client.\n");
         return -1;
     }
 
+    printf("Message from '%d' to '%d' was successfully sent.\n", sender_id, receiver_id);
     return 0;
 }
 
@@ -216,14 +226,35 @@ int send_to_all(int sender_id, char* body) {
             if (send_to_one(receiver_id, sender_id, body) == -1) return -1;
         }
     }
+
+    printf("Message from '%d' was successfully sent to all remaining clients.\n", sender_id);
     return 0;
 }
 
-void list_all_active_clients(void) {
+int list_all_active_clients(int sender_id) {
     printf("All active clients:\n");
-    for (int receiver_id; receiver_id < MAX_NO_CLIENTS; receiver_id++) {
-        if (CLIENT_QUEUES[receiver_id]) printf("%d\n", receiver_id);
+    char buff[MAX_MSG_LENGTH];
+    char temp[32];
+    buff[0] = '\0';
+
+    for (int receiver_id = 0; receiver_id < MAX_NO_CLIENTS; receiver_id++) {
+        if (CLIENT_QUEUES[receiver_id]) {
+            printf("%d\n", receiver_id);
+            sprintf(temp, "%d\n", receiver_id);
+            strcat(buff, temp);
+        }
     }
+
+    msg_buf msg = { .type = LIST };
+    strcpy(msg.body, buff);
+
+    if (msgsnd(CLIENT_QUEUES[sender_id], &msg, MSG_SIZE, 0) == -1) {
+        perror("Unable to send a message to the receiver client.\n");
+        return -1;
+    }
+
+    puts("List message was successfully sent.");
+    return 0;
 }
 
 int set_sa_handler(int sig_no, int sa_flags, void (*handler)(int)) {
@@ -244,7 +275,7 @@ void exit_handler(void) {
     msg_buf msg = { .type = STOP };
     for (int receiver_id = 0; receiver_id < MAX_NO_CLIENTS; receiver_id++) {
         if (!CLIENT_QUEUES[receiver_id]) {
-            printf("Client %d is already stopped.\n", receiver_id);
+            continue;
         } else if (msgsnd(CLIENT_QUEUES[receiver_id], &msg, MSG_SIZE, 0) == -1) {
             fprintf(stderr, "Unable to send a STOP message to the '%d' client.\n", receiver_id);
         } else {
