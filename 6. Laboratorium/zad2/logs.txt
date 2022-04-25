@@ -1,0 +1,162 @@
+2022-04-25 17:54:57
+Client id: 0
+Message type: 5
+Message body:
+'/mateu26470'
+
+2022-04-25 17:55:12
+Client id: 0
+Message type: 3
+Message body:
+'Cicho wszędzie, głucho wszędzie, co to będzie, co to będzie.'
+
+2022-04-25 17:55:20
+Client id: 0
+Message type: 5
+Message body:
+'/mateu26474'
+
+2022-04-25 17:55:31
+Client id: 1
+Message type: 4
+Message body:
+'Siema, tylko Ty dziś na serwerze?'
+
+2022-04-25 17:55:47
+Client id: 0
+Message type: 4
+Message body:
+'Tak, niestety. Czekaj, napiszę do XYZ.'
+
+2022-04-25 17:56:05
+Client id: 0
+Message type: 4
+Message body:
+'Już wchodzi'
+
+2022-04-25 17:56:07
+Client id: 0
+Message type: 5
+Message body:
+'/mateu26480'
+
+2022-04-25 17:56:18
+Client id: 2
+Message type: 3
+Message body:
+'Siema, co tam u Was?'
+
+2022-04-25 17:56:33
+Client id: 0
+Message type: 4
+Message body:
+'Siema, nudzimy się, więc do Ciebie napisałem.'
+
+2022-04-25 17:56:48
+Client id: 1
+Message type: 4
+Message body:
+'Elo, gramy w coś?'
+
+2022-04-25 17:57:16
+Client id: 2
+Message type: 3
+Message body:
+'Wiecie co, ja nie mam dzisiaj czasu, więc będę leciał za chiwlę. Sorki i do zobaczenia później.'
+
+2022-04-25 17:57:28
+Client id: 1
+Message type: 2
+Message body:
+'(null)'
+
+2022-04-25 17:57:40
+Client id: 1
+Message type: 4
+Message body:
+'Jeszcze jest, ciekawe dlaczego.'
+
+2022-04-25 17:58:03
+Client id: 0
+Message type: 5
+Message body:
+'/mateu26495'
+
+2022-04-25 17:58:09
+Client id: 0
+Message type: 5
+Message body:
+'/mateu26497'
+
+2022-04-25 17:58:27
+Client id: 1
+Message type: 3
+Message body:
+'Co się stało, serwer wywaliło?'
+
+2022-04-25 17:58:45
+Client id: 0
+Message type: 4
+Message body:
+'Chyba tak. Niby ludzi nie ma, a nie wyrabia.'
+
+2022-04-25 17:59:03
+Client id: 0
+Message type: 4
+Message body:
+'Wiesz co, we 2o nie ma co tu s siedzieć, dawaj na rower.'
+
+2022-04-25 17:59:25
+Client id: 1
+Message type: 4
+Message body:
+'W sumie, i takie mam nido rororoboty. Będę u Ciebie za 15 minut.'
+
+2022-04-25 17:59:34
+Client id: 0
+Message type: 4
+Message body:
+'To jesteśmy u�wieni.'
+
+2022-04-25 18:03:42
+Client id: 1
+Message type: 1
+Message body:
+'(null)'
+
+2022-04-25 18:03:56
+Client id: 0
+Message type: 3
+Message body:
+'Już poszedł nawet się nie pożegnał.'
+
+2022-04-25 18:04:04
+Client id: 0
+Message type: 5
+Message body:
+'/mateu26664'
+
+2022-04-25 18:05:08
+Client id: 1
+Message type: 4
+Message body:
+'Siema, coś jeszcze pisałeś, a ale wyszedłem.'
+
+2022-04-25 18:05:40
+Client id: 0
+Message type: 4
+Message body:
+'Nic ważnego, szykuj się. Ja też już idę. Nara.'
+
+2022-04-25 18:05:53
+Client id: 0
+Message type: 1
+Message body:
+'(null)'
+
+2022-04-25 18:05:55
+Client id: 1
+Message type: 1
+Message body:
+'(null)'
+
