@@ -1,5 +1,5 @@
 <div align="center">
-  <img style="width: 420px;" alt="Penguin" src="/Docs/gifs/penguin.gif"/>
+  <img style="width: 420px;" alt="Penguin" src="/docs/gifs/penguin.gif"/>
 </div>
 
 # Operating systems
