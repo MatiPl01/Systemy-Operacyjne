@@ -2,7 +2,7 @@
   <img style="width: 420px;" alt="Penguin" src="/docs/gifs/penguin.gif"/>
 </div>
 
-# Operating systems
+# Systemy Operacyjne
 
 To repozytorium zawiera rozwiązania zadań z przedmiotu Systemy Operacyjne realizowanego na 4. semestrze studiów informatycznych na AGH.
 
