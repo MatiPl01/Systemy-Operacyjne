@@ -35,3 +35,8 @@ To repozytorium zawiera rozwiązania zadań z przedmiotu Systemy Operacyjne real
 ### IPC - kolejki komunikatów
 
 [https://github.com/MatiPl01/Systemy-Operacyjne/tree/main/laboratoria/6. Laboratorium](https://github.com/MatiPl01/Systemy-Operacyjne/tree/main/laboratoria/6.%20Laboratorium)
+
+## 7. Laboratorium
+### IPC - pamieć wspólna, semafory
+
+[https://github.com/MatiPl01/Systemy-Operacyjne/tree/main/laboratoria/7. Laboratorium](https://github.com/MatiPl01/Systemy-Operacyjne/tree/main/laboratoria/7.%20Laboratorium)
