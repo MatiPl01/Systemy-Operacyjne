@@ -1,20 +1,25 @@
 #include <time.h>
+#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <signal.h>
 #include <stdbool.h>
-#include <sys/sem.h>
-#include <sys/shm.h>
+#include <sys/mman.h>
+#include <semaphore.h>
 #include "lib/libcommon.h"
 
 
-int sem_id;
 int oven_idx;
 int table_idx;
 Pizzeria *pizzeria;
+sem_t *available_places_in_oven_id;
+sem_t *available_places_on_the_table_id;
+sem_t *no_waiting_pizzas_id;
+sem_t *memory_lock_id;
 
 void exit_handler(void);
+int open_semaphores(void);
 
 int choose_pizza_type(void);
 void prepare_pizza(int pizza_type);
@@ -38,19 +43,44 @@ int main(void) {
         return EXIT_FAILURE;
     }
 
-    // Load pizzeria data
-    if (!(pizzeria = load_pizzeria_data(&sem_id))) return EXIT_FAILURE;
+    // Open semaphores and load pizzeria data
+    if (open_semaphores() == -1 || !(pizzeria = load_pizzeria_data())) {
+        return EXIT_FAILURE;
+    }
 
     // Start working
     if (work() == -1) return EXIT_FAILURE;
 }
 
 
+int open_semaphores(void) {
+    if ((available_places_in_oven_id = sem_open(AVAILABLE_PLACES_IN_OVEN, O_RDWR)) == SEM_FAILED
+     || (available_places_on_the_table_id = sem_open(AVAILABLE_PLACES_ON_THE_TABLE, O_RDWR)) == SEM_FAILED
+     || (no_waiting_pizzas_id = sem_open(NO_WAITING_PIZZAS, O_RDWR)) == SEM_FAILED
+     || (memory_lock_id = sem_open(MEMORY_LOCK, O_RDWR)) == SEM_FAILED) {
+        perror("Nie można otworzyć semaforów\n");
+        return -1;
+    }
+
+    return 0;
+}
+
 void exit_handler(void) {
-    if (pizzeria && shmdt(pizzeria) == -1) {
-        perror("Nie można odłączyć pamięci współdzielonej\n");
+    // Close semaphores
+    if ((available_places_in_oven_id && sem_close(available_places_in_oven_id) == -1)
+     || (available_places_on_the_table_id && sem_close(available_places_on_the_table_id) == -1)
+     || (no_waiting_pizzas_id && sem_close(no_waiting_pizzas_id) == -1)
+     || (memory_lock_id && sem_close(memory_lock_id) == -1)) {
+        perror("Nie można zamknąć semaforów");
         exit(EXIT_FAILURE);
     }
+
+    // Detach shared memory
+    if (munmap(pizzeria, sizeof(Pizzeria)) == -1) {
+        perror("Nie można odłączyć pamięci współdzielonej");
+        exit(EXIT_FAILURE);
+    }
+
     printf("Kucharz %d zakończył pracę\n", getpid());
 }
 
@@ -65,11 +95,9 @@ void prepare_pizza(int pizza_type) {
 
 int put_pizza_in_oven(int pizza_type) {
     // Lock memory and put zad2 pizza in the oven
-    if (semop(sem_id, (struct sembuf[]) {
-            lock_memory_options,
-            put_pizza_in_oven_options
-    }, 2) == -1) {
-        perror("Nie można wykonać operacji na zbiorze semaforów\n");
+    if (sem_wait(available_places_in_oven_id) == -1  // decrement
+     || sem_wait(memory_lock_id) == -1) {
+        perror("Nie można wykonać operacji na semaforach\n");
         return -1;
     }
 
@@ -94,10 +122,8 @@ int put_pizza_in_oven(int pizza_type) {
     );
 
     // Unlock memory
-    if (semop(sem_id, (struct sembuf[]) {
-            unlock_memory_options
-    }, 1) == -1) {
-        perror("Nie można wykonać operacji na zbiorze semaforów\n");
+    if (sem_post(memory_lock_id) == -1) {
+        perror("Nie można wykonać operacji na semaforach\n");
         return -1;
     }
 
@@ -110,13 +136,11 @@ void bake_pizza(void) {
 
 int take_pizza_out_of_the_oven_and_put_on_the_table(void) {
     // Lock memory, take pizza out of the oven, put pizza on the table and mark as waiting for zad2 delivery
-    if (semop(sem_id, (struct sembuf[]) {
-            lock_memory_options,
-            take_pizza_out_of_oven_options,
-            put_pizza_on_the_table_options,
-            add_pizza_to_waiting_options
-    }, 4) == -1) {
-        perror("Nie można wykonać operacji na zbiorze semaforów\n");
+    if (sem_wait(available_places_on_the_table_id) == -1   // decrement
+     || sem_wait(memory_lock_id) == -1
+     || sem_post(available_places_in_oven_id) == -1        // increment
+     || sem_post(no_waiting_pizzas_id) == -1) {            // increment
+        perror("Nie można wykonać operacji na semaforach\n");
         return -1;
     }
 
@@ -147,10 +171,8 @@ int take_pizza_out_of_the_oven_and_put_on_the_table(void) {
     );
 
     // Unlock memory
-    if (semop(sem_id, (struct sembuf[]) {
-            unlock_memory_options
-    }, 1) == -1) {
-        perror("Nie można wykonać operacji na zbiorze semaforów\n");
+    if (sem_post(memory_lock_id) == -1) {
+        perror("Nie można wykonać operacji na semaforach\n");
         return -1;
     }
 
@@ -163,6 +185,6 @@ int work(void) {
         prepare_pizza(pizza_type);
         if (put_pizza_in_oven(pizza_type) == -1) return -1;
         bake_pizza();
-        if (take_pizza_out_of_the_oven_and_put_on_the_table() == -1) return -1;
+        if (take_pizza_out_of_the_oven_and_put_on_the_table()  == -1) return -1;
     }
 }

@@ -57,4 +57,8 @@ Sprawdź dla 2 różnych wartości *N*, *M* (dla *N*, *M* < 5 i *N*, *M* > 5) i 
 Zrealizuj powyższy problem synchronizacyjny, wykorzystując mechanizmy synchronizacji procesów oraz pamięć współdzieloną ze standardu:
 
 1) IPC - System V (50%)
-2) IPC - Posix (50%)
+2) IPC - POSIX (50%)*
+
+<br>
+
+**\* UWAGA**: W przeciwieństwie do Systemu V, w którym aktualizujemy wartości kilku semaforów równocześnie, w przypadku POSIX kolejność aktualizacji semaforów ma znaczenie!

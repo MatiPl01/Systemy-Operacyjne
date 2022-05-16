@@ -1,8 +1,11 @@
 #include "libcommon.h"
+#include <sys/mman.h>
+#include <sys/stat.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <signal.h>
 #include <stdio.h>
+#include <fcntl.h>
 #include <time.h>
 #include <math.h>
 
@@ -55,36 +58,17 @@ void fill_array(int arr[], int arr_length, int value) {
     for (int i = 0; i < arr_length; i++) arr[i] = value;
 }
 
-key_t generate_key(char proj_id) {
-    char* home_path = getenv("HOME");
-    key_t key = ftok(home_path, proj_id);
-    if (key == -1) {
-        perror("Nie można wygenerować klucza\n");
-        return -1;
-    }
-    return key;
-}
-
-Pizzeria *load_pizzeria_data(int *sem_id) {
-    // Open existing semaphores
-    key_t key;
-    if ((key = generate_key(SEMAPHORE_PROJ_ID)) == -1) return NULL;
-    if ((*sem_id = semget(key, 0, 0)) == -1) {
-        perror("Nie można otworzyć semaforów\n");
-        return NULL;
-    }
-
+Pizzeria *load_pizzeria_data(void) {
     // Open existing shared memory
-    if ((key = generate_key(MEMORY_PROJ_ID)) == -1) return NULL;
     int shm_id;
-    if ((shm_id = shmget(key, 0, 0)) == -1) {
-        perror("Nie można otworzyć pamięci współdzielonej\n");
+    if ((shm_id = shm_open(SHARED_MEMORY_PATH, O_RDWR, 0)) == -1) {
+        perror("Nie można otworzyć segmentu pamięci współdzielonej\n");
         return NULL;
     }
 
     // Load pizzeria data
     Pizzeria *pizzeria;
-    if ((pizzeria = shmat(shm_id, NULL, 0)) == (void*) -1) {
+    if ((pizzeria = mmap(NULL, sizeof(Pizzeria), PROT_READ | PROT_WRITE, MAP_SHARED, shm_id, 0)) == (void*) -1) {
         perror("Nie można załadować danych z pamięci współdzielonej\n");
         return NULL;
     }

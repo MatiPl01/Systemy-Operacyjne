@@ -1,0 +1,5 @@
+Semafory pozwalają na wyłączny dostęp procesu do pamięci współdzielonej. Pozwalają one również na zablokowanie dostępu tym procesom, które chcą wykonać niemożliwą do wykonania w danym momencie operację (np. dostawca nie zdejmie pizzy ze stołu, dopóki kucharz jej nie umieści na stole).
+
+Zarówno dla wartości N, M < 5, jak i dla N, M > 5, program działał zgodnie z założeniami. W żadnym z przypadków nie została przekroczona maksymalna liczba pizz w piecu oraz na stole. Możemy również zaobserwować, że w sytuacji, gdy N >> M, stół oraz piec są cały czas zapełnione, ponieważ liczba dostawców jest zbyt niewielka. Jeżeli N < M, sytuacja jest odwrotna i stół jest prawie cały czas pusty (natomiast liczba pizz w piecu zależy w głównej mierze od liczby kucharzy).
+
+W przypadku gdy wykorzystujemy IPC POSIX, możemy zauważyć, że kolejność aktualizacji semaforów, w przeciwieństwie do Systemu V, ma znaczenie. Wynika to stąd, że aktualizacji dokonujemy pojedynczo, a w Systemie V aktualizowne jest kilka wskazanych semaforów równocześnie (w sposób atomowy).

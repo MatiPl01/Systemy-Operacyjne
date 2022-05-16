@@ -1,16 +1,18 @@
+#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
 #include <unistd.h>
 #include <stdbool.h>
-#include <sys/sem.h>
 #include <sys/wait.h>
+#include <sys/mman.h>
+#include <semaphore.h>
 #include "lib/libcommon.h"
 
 
-key_t key;
-int sem_id = -1;
 int shm_id = -1;
+bool are_semaphores_open = false;
+sem_t *semaphores[NO_SEMAPHORES];
 Pizzeria *pizzeria;
 
 int no_chefs;
@@ -22,7 +24,7 @@ void sigint_handler(int sig_no);
 void exit_handler(void);
 
 void clear_pizzeria(void);
-int initialize_semaphores(void);
+int open_semaphores(void);
 int initialize_shared_memory(void);
 int detach_shared_memory(void);
 int employ_chefs(void);
@@ -55,7 +57,7 @@ int main(int argc, char* argv[]) {
 
     // Create the restaurant
     bool is_error = false;
-    if (initialize_semaphores() == -1
+    if (open_semaphores() == -1
      || initialize_shared_memory() == -1
      || employ_chefs() == -1
      || employ_deliverers() == -1
@@ -83,17 +85,35 @@ void exit_handler(void) {
         free(deliverers);
     }
 
-    if (sem_id == -1 || shm_id == -1) exit(EXIT_FAILURE);
+    if (!are_semaphores_open) exit(EXIT_FAILURE);
 
-    // Remove semaphores
-    if (semctl(sem_id, 0, IPC_RMID) == -1) {
-        perror("Nie można usunąć semaforów\n");
-        exit(EXIT_FAILURE);
+    // Close semaphores
+    for (int i = 0; i < NO_SEMAPHORES; i++) {
+        if (sem_close(semaphores[i]) == -1) {
+            perror("Nie można zamknąć semaforów\n");
+            exit(EXIT_FAILURE);
+        }
     }
 
-    // Remove share memory
-    if (shmctl(shm_id, IPC_RMID, NULL) == -1) {
-        perror("Nie można usunąć pamięci współdzielonej\n");
+    // Unlink semaphores
+    char* semaphore_names[] = {
+        AVAILABLE_PLACES_IN_OVEN,
+        AVAILABLE_PLACES_ON_THE_TABLE,
+        NO_WAITING_PIZZAS,
+        NO_PIZZAS_IN_DELIVERY,
+        MEMORY_LOCK
+    };
+
+    for (int i = 0; i < NO_SEMAPHORES; i++) {
+        if (sem_unlink(semaphore_names[i]) == -1) {
+            perror("Nie można usunąć semaforów\n");
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    // Unlink the shared memory
+    if (shm_unlink(SHARED_MEMORY_PATH) == -1) {
+        perror("Nie można odłączyć pamięci współdzielonej\n");
         exit(EXIT_FAILURE);
     }
 
@@ -111,41 +131,38 @@ void clear_pizzeria(void) {
     fill_array(pizzeria->table_slots, TABLE_CAPACITY, -1);
 }
 
-int initialize_semaphores(void) {
-    // Generate the key
-    if ((key = generate_key(SEMAPHORE_PROJ_ID)) == -1) return -1;
-
+int open_semaphores(void) {
     // Open semaphores
-    if ((sem_id = semget(key, 5, PERMISSIONS | IPC_CREAT)) == -1) {
-        perror("Nie można stworzyć semaforów\n");
+    if ((semaphores[0] = sem_open(AVAILABLE_PLACES_IN_OVEN, O_CREAT, PERMISSIONS, OVEN_CAPACITY)) == SEM_FAILED
+     || (semaphores[1] = sem_open(AVAILABLE_PLACES_ON_THE_TABLE, O_CREAT, PERMISSIONS, TABLE_CAPACITY)) == SEM_FAILED
+     || (semaphores[2] = sem_open(NO_WAITING_PIZZAS, O_CREAT, PERMISSIONS, 0)) == SEM_FAILED
+     || (semaphores[3] = sem_open(NO_PIZZAS_IN_DELIVERY, O_CREAT, PERMISSIONS, 0)) == SEM_FAILED
+     || (semaphores[4] = sem_open(MEMORY_LOCK, O_CREAT, PERMISSIONS, 1)) == SEM_FAILED) {
+        perror("Nie można otworzyć semaforów\n");
         return -1;
     }
 
-    // Initialize semaphores
-    if (semctl(sem_id, AVAILABLE_PLACES_IN_OVEN, SETVAL, (union semun) { .val = OVEN_CAPACITY }) == -1
-     || semctl(sem_id, AVAILABLE_PLACES_ON_THE_TABLE, SETVAL, (union semun) { .val = TABLE_CAPACITY }) == -1
-     || semctl(sem_id, NO_WAITING_PIZZAS, SETVAL, (union semun) { .val = 0 }) == -1
-     || semctl(sem_id, NO_PIZZAS_IN_DELIVERY, SETVAL, (union semun) { .val = 0 }) == -1
-     || semctl(sem_id, MEMORY_LOCK, SETVAL, (union semun) { .val = 1 }) == -1) {
-        perror("Nie można zainicjalizować wartości semaforów\n");
-        return -1;
-    }
+    are_semaphores_open = true;
 
     return 0;
 }
 
 int initialize_shared_memory(void) {
-    // Generate the key
-    if ((key = generate_key(MEMORY_PROJ_ID)) == -1) return -1;
-
     // Create shared memory segment
-    if ((shm_id = shmget(key, sizeof(Pizzeria), PERMISSIONS | IPC_CREAT)) == -1) {
+    int shm_id;
+    if ((shm_id = shm_open(SHARED_MEMORY_PATH, O_CREAT | O_RDWR, PERMISSIONS)) == -1) {
         perror("Nie można stworzyć segmentu pamięci współdzielonej\n");
         return -1;
     }
 
+    // Set the size of the shared memory segment
+    if (ftruncate(shm_id, sizeof(Pizzeria)) == -1) {
+        perror("Nie można ustawić rozmiaru pamięci współdzielonej\n");
+        return -1;
+    }
+
     // Load pizzeria data struct
-    if ((pizzeria = shmat(shm_id, NULL, 0)) == (void*) -1) {
+    if ((pizzeria = mmap(NULL, sizeof(Pizzeria), PROT_READ | PROT_WRITE, MAP_SHARED, shm_id, 0)) == (void*) -1) {
         perror("Nie można załadować danych z pamięci współdzielonej\n");
         return -1;
     }
@@ -157,7 +174,7 @@ int initialize_shared_memory(void) {
 }
 
 int detach_shared_memory(void) {
-    if (shmdt(pizzeria) == -1) {
+    if (munmap(pizzeria, sizeof(Pizzeria)) == -1) {
         perror("Nie można odłączyć pamięci współdzielonej\n");
         return -1;
     }
