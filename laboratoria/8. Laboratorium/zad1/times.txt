@@ -1,0 +1,1984 @@
+KOMENTARZ:
+
+Przetestowane zostaly obie metody podziału zadania ('numbers' oraz 'block').
+Możemy zauważyć, że program dużej działał dla metody 'block', ponieważ wówczas
+każdy wątek musi przejść po wszystkich pikselach obrazka, w celu znalezienia
+pikseli o takich kolorach, które powinien przekształcić. W przypadku metody
+'block', wątek przegląda jedynie tę część obrazka, którą modyfikuje.
+
+Można też łatwo zauważyć, że w przypadku metody 'numbers', zwiększanie liczby wątków 
+zmniejsza szybkość działania programu (wydłuża jego czas działania). W przypadku metody 
+'block', sytuacja jest nieco inna i początkowo zwiększanie liczby wątków prowadzi
+do zmniejszenia czasu przekształcania obrazka na negatyw, po czym, gdy zwiększymy za
+bardzo liczbę wątków, czas działania programu rośnie (ponieważ każdy z wątków wykonuje
+bardzo mało operacji i czas potrzebny na ich inicjalizację ma większe znaczenie niż
+wykonywane przez wątki operacje).
+
+===================================================================================
+
+
+
+
+
+***********************************************
+Number of threads:            1
+Threads distribution method:  numbers
+Source file name:  ./sources/dragon.ascii.pgm
+Result file name:  ./results/dragon.ascii.pgm
+***********************************************
+
+Thread     0:	   912 [μs]
+
+Total time:   1670 [μs]
+***********************************************
+Number of threads:            2
+Threads distribution method:  numbers
+Source file name:  ./sources/dragon.ascii.pgm
+Result file name:  ./results/dragon.ascii.pgm
+***********************************************
+
+Thread     0:	  1628 [μs]
+Thread     1:	  1570 [μs]
+
+Total time:   2347 [μs]
+***********************************************
+Number of threads:            4
+Threads distribution method:  numbers
+Source file name:  ./sources/dragon.ascii.pgm
+Result file name:  ./results/dragon.ascii.pgm
+***********************************************
+
+Thread     0:	   857 [μs]
+Thread     1:	  1541 [μs]
+Thread     2:	  1394 [μs]
+Thread     3:	  1853 [μs]
+
+Total time:   2168 [μs]
+***********************************************
+Number of threads:            8
+Threads distribution method:  numbers
+Source file name:  ./sources/dragon.ascii.pgm
+Result file name:  ./results/dragon.ascii.pgm
+***********************************************
+
+Thread     0:	   585 [μs]
+Thread     1:	   759 [μs]
+Thread     2:	   837 [μs]
+Thread     3:	   707 [μs]
+Thread     4:	   471 [μs]
+Thread     5:	   566 [μs]
+Thread     6:	   770 [μs]
+Thread     7:	   818 [μs]
+
+Total time:   2293 [μs]
+***********************************************
+Number of threads:            16
+Threads distribution method:  numbers
+Source file name:  ./sources/dragon.ascii.pgm
+Result file name:  ./results/dragon.ascii.pgm
+***********************************************
+
+Thread     0:	  1136 [μs]
+Thread     1:	  1060 [μs]
+Thread     2:	  1090 [μs]
+Thread     3:	  1425 [μs]
+Thread     4:	   498 [μs]
+Thread     5:	   513 [μs]
+Thread     6:	   507 [μs]
+Thread     7:	  1170 [μs]
+Thread     8:	   800 [μs]
+Thread     9:	  1256 [μs]
+Thread    10:	   673 [μs]
+Thread    11:	   502 [μs]
+Thread    12:	   605 [μs]
+Thread    13:	   534 [μs]
+Thread    14:	   450 [μs]
+Thread    15:	   755 [μs]
+
+Total time:   3618 [μs]
+***********************************************
+Number of threads:            32
+Threads distribution method:  numbers
+Source file name:  ./sources/dragon.ascii.pgm
+Result file name:  ./results/dragon.ascii.pgm
+***********************************************
+
+Thread     0:	   561 [μs]
+Thread     1:	   892 [μs]
+Thread     2:	  1050 [μs]
+Thread     3:	  1348 [μs]
+Thread     4:	   517 [μs]
+Thread     5:	   519 [μs]
+Thread     6:	   696 [μs]
+Thread     7:	   510 [μs]
+Thread     8:	   571 [μs]
+Thread     9:	   531 [μs]
+Thread    10:	   582 [μs]
+Thread    11:	   515 [μs]
+Thread    12:	   562 [μs]
+Thread    13:	   530 [μs]
+Thread    14:	   640 [μs]
+Thread    15:	   467 [μs]
+Thread    16:	   524 [μs]
+Thread    17:	   490 [μs]
+Thread    18:	   461 [μs]
+Thread    19:	   491 [μs]
+Thread    20:	   489 [μs]
+Thread    21:	   596 [μs]
+Thread    22:	   455 [μs]
+Thread    23:	   491 [μs]
+Thread    24:	   484 [μs]
+Thread    25:	   534 [μs]
+Thread    26:	   463 [μs]
+Thread    27:	   483 [μs]
+Thread    28:	   478 [μs]
+Thread    29:	   499 [μs]
+Thread    30:	   548 [μs]
+Thread    31:	   882 [μs]
+
+Total time:   5839 [μs]
+***********************************************
+Number of threads:            64
+Threads distribution method:  numbers
+Source file name:  ./sources/dragon.ascii.pgm
+Result file name:  ./results/dragon.ascii.pgm
+***********************************************
+
+Thread     0:	  1159 [μs]
+Thread     1:	  1226 [μs]
+Thread     2:	   627 [μs]
+Thread     3:	  1305 [μs]
+Thread     4:	  1206 [μs]
+Thread     5:	   518 [μs]
+Thread     6:	   941 [μs]
+Thread     7:	   552 [μs]
+Thread     8:	   623 [μs]
+Thread     9:	   687 [μs]
+Thread    10:	   540 [μs]
+Thread    11:	  1068 [μs]
+Thread    12:	   500 [μs]
+Thread    13:	   508 [μs]
+Thread    14:	   557 [μs]
+Thread    15:	   609 [μs]
+Thread    16:	   853 [μs]
+Thread    17:	   524 [μs]
+Thread    18:	   619 [μs]
+Thread    19:	   509 [μs]
+Thread    20:	   511 [μs]
+Thread    21:	   522 [μs]
+Thread    22:	   523 [μs]
+Thread    23:	   524 [μs]
+Thread    24:	   520 [μs]
+Thread    25:	   591 [μs]
+Thread    26:	   595 [μs]
+Thread    27:	   610 [μs]
+Thread    28:	   665 [μs]
+Thread    29:	   555 [μs]
+Thread    30:	   464 [μs]
+Thread    31:	   570 [μs]
+Thread    32:	   501 [μs]
+Thread    33:	   500 [μs]
+Thread    34:	   488 [μs]
+Thread    35:	   496 [μs]
+Thread    36:	   529 [μs]
+Thread    37:	   532 [μs]
+Thread    38:	   582 [μs]
+Thread    39:	   536 [μs]
+Thread    40:	   481 [μs]
+Thread    41:	   477 [μs]
+Thread    42:	   529 [μs]
+Thread    43:	  1206 [μs]
+Thread    44:	   497 [μs]
+Thread    45:	   653 [μs]
+Thread    46:	   569 [μs]
+Thread    47:	   551 [μs]
+Thread    48:	   511 [μs]
+Thread    49:	   478 [μs]
+Thread    50:	   509 [μs]
+Thread    51:	   490 [μs]
+Thread    52:	   477 [μs]
+Thread    53:	   522 [μs]
+Thread    54:	   510 [μs]
+Thread    55:	   484 [μs]
+Thread    56:	   931 [μs]
+Thread    57:	   476 [μs]
+Thread    58:	   506 [μs]
+Thread    59:	   492 [μs]
+Thread    60:	   533 [μs]
+Thread    61:	   565 [μs]
+Thread    62:	   532 [μs]
+Thread    63:	  1004 [μs]
+
+Total time:   8192 [μs]
+***********************************************
+Number of threads:            128
+Threads distribution method:  numbers
+Source file name:  ./sources/dragon.ascii.pgm
+Result file name:  ./results/dragon.ascii.pgm
+***********************************************
+
+Thread     0:	  1428 [μs]
+Thread     1:	  1321 [μs]
+Thread     2:	   729 [μs]
+Thread     3:	  1222 [μs]
+Thread     4:	   577 [μs]
+Thread     5:	   553 [μs]
+Thread     6:	   551 [μs]
+Thread     7:	   581 [μs]
+Thread     8:	   562 [μs]
+Thread     9:	   588 [μs]
+Thread    10:	   637 [μs]
+Thread    11:	   646 [μs]
+Thread    12:	   561 [μs]
+Thread    13:	   554 [μs]
+Thread    14:	   748 [μs]
+Thread    15:	   578 [μs]
+Thread    16:	   568 [μs]
+Thread    17:	   573 [μs]
+Thread    18:	   862 [μs]
+Thread    19:	   821 [μs]
+Thread    20:	   840 [μs]
+Thread    21:	   594 [μs]
+Thread    22:	   586 [μs]
+Thread    23:	   620 [μs]
+Thread    24:	   933 [μs]
+Thread    25:	   588 [μs]
+Thread    26:	   631 [μs]
+Thread    27:	   616 [μs]
+Thread    28:	   644 [μs]
+Thread    29:	   612 [μs]
+Thread    30:	   599 [μs]
+Thread    31:	   630 [μs]
+Thread    32:	   628 [μs]
+Thread    33:	   687 [μs]
+Thread    34:	   627 [μs]
+Thread    35:	   626 [μs]
+Thread    36:	   649 [μs]
+Thread    37:	   613 [μs]
+Thread    38:	   627 [μs]
+Thread    39:	   636 [μs]
+Thread    40:	   629 [μs]
+Thread    41:	   619 [μs]
+Thread    42:	   642 [μs]
+Thread    43:	   635 [μs]
+Thread    44:	   655 [μs]
+Thread    45:	   654 [μs]
+Thread    46:	   627 [μs]
+Thread    47:	   680 [μs]
+Thread    48:	   681 [μs]
+Thread    49:	   654 [μs]
+Thread    50:	   654 [μs]
+Thread    51:	   660 [μs]
+Thread    52:	   655 [μs]
+Thread    53:	   659 [μs]
+Thread    54:	   669 [μs]
+Thread    55:	   646 [μs]
+Thread    56:	   679 [μs]
+Thread    57:	   810 [μs]
+Thread    58:	   659 [μs]
+Thread    59:	   653 [μs]
+Thread    60:	   584 [μs]
+Thread    61:	   593 [μs]
+Thread    62:	   594 [μs]
+Thread    63:	   638 [μs]
+Thread    64:	   626 [μs]
+Thread    65:	   628 [μs]
+Thread    66:	   608 [μs]
+Thread    67:	   611 [μs]
+Thread    68:	   591 [μs]
+Thread    69:	   625 [μs]
+Thread    70:	   630 [μs]
+Thread    71:	   632 [μs]
+Thread    72:	   628 [μs]
+Thread    73:	   701 [μs]
+Thread    74:	   621 [μs]
+Thread    75:	   635 [μs]
+Thread    76:	   645 [μs]
+Thread    77:	   602 [μs]
+Thread    78:	   650 [μs]
+Thread    79:	   653 [μs]
+Thread    80:	   662 [μs]
+Thread    81:	   632 [μs]
+Thread    82:	   670 [μs]
+Thread    83:	   646 [μs]
+Thread    84:	   645 [μs]
+Thread    85:	   620 [μs]
+Thread    86:	   704 [μs]
+Thread    87:	   601 [μs]
+Thread    88:	   646 [μs]
+Thread    89:	   610 [μs]
+Thread    90:	   654 [μs]
+Thread    91:	   609 [μs]
+Thread    92:	   659 [μs]
+Thread    93:	   609 [μs]
+Thread    94:	   609 [μs]
+Thread    95:	   620 [μs]
+Thread    96:	   638 [μs]
+Thread    97:	   606 [μs]
+Thread    98:	   612 [μs]
+Thread    99:	   725 [μs]
+Thread   100:	   609 [μs]
+Thread   101:	   673 [μs]
+Thread   102:	   614 [μs]
+Thread   103:	   670 [μs]
+Thread   104:	   607 [μs]
+Thread   105:	   606 [μs]
+Thread   106:	   617 [μs]
+Thread   107:	   624 [μs]
+Thread   108:	   656 [μs]
+Thread   109:	   614 [μs]
+Thread   110:	   663 [μs]
+Thread   111:	   654 [μs]
+Thread   112:	   608 [μs]
+Thread   113:	   609 [μs]
+Thread   114:	   652 [μs]
+Thread   115:	   614 [μs]
+Thread   116:	  1891 [μs]
+Thread   117:	   672 [μs]
+Thread   118:	  1757 [μs]
+Thread   119:	  1049 [μs]
+Thread   120:	   665 [μs]
+Thread   121:	   850 [μs]
+Thread   122:	   633 [μs]
+Thread   123:	   691 [μs]
+Thread   124:	   761 [μs]
+Thread   125:	   827 [μs]
+Thread   126:	   743 [μs]
+Thread   127:	  1278 [μs]
+
+Total time:  20230 [μs]
+***********************************************
+Number of threads:            1
+Threads distribution method:  block
+Source file name:  ./sources/dragon.ascii.pgm
+Result file name:  ./results/dragon.ascii.pgm
+***********************************************
+
+Thread     0:	  1407 [μs]
+
+Total time:   2362 [μs]
+***********************************************
+Number of threads:            2
+Threads distribution method:  block
+Source file name:  ./sources/dragon.ascii.pgm
+Result file name:  ./results/dragon.ascii.pgm
+***********************************************
+
+Thread     0:	   910 [μs]
+Thread     1:	   956 [μs]
+
+Total time:   1915 [μs]
+***********************************************
+Number of threads:            4
+Threads distribution method:  block
+Source file name:  ./sources/dragon.ascii.pgm
+Result file name:  ./results/dragon.ascii.pgm
+***********************************************
+
+Thread     0:	   453 [μs]
+Thread     1:	   426 [μs]
+Thread     2:	   435 [μs]
+Thread     3:	   538 [μs]
+
+Total time:   1719 [μs]
+***********************************************
+Number of threads:            8
+Threads distribution method:  block
+Source file name:  ./sources/dragon.ascii.pgm
+Result file name:  ./results/dragon.ascii.pgm
+***********************************************
+
+Thread     0:	   131 [μs]
+Thread     1:	   239 [μs]
+Thread     2:	  1012 [μs]
+Thread     3:	   161 [μs]
+Thread     4:	   130 [μs]
+Thread     5:	   241 [μs]
+Thread     6:	   133 [μs]
+Thread     7:	   107 [μs]
+
+Total time:   1364 [μs]
+***********************************************
+Number of threads:            16
+Threads distribution method:  block
+Source file name:  ./sources/dragon.ascii.pgm
+Result file name:  ./results/dragon.ascii.pgm
+***********************************************
+
+Thread     0:	   141 [μs]
+Thread     1:	   131 [μs]
+Thread     2:	   121 [μs]
+Thread     3:	    44 [μs]
+Thread     4:	    98 [μs]
+Thread     5:	    66 [μs]
+Thread     6:	   152 [μs]
+Thread     7:	   152 [μs]
+Thread     8:	    71 [μs]
+Thread     9:	    66 [μs]
+Thread    10:	    66 [μs]
+Thread    11:	   120 [μs]
+Thread    12:	    73 [μs]
+Thread    13:	    66 [μs]
+Thread    14:	    71 [μs]
+Thread    15:	   102 [μs]
+
+Total time:   1859 [μs]
+***********************************************
+Number of threads:            32
+Threads distribution method:  block
+Source file name:  ./sources/dragon.ascii.pgm
+Result file name:  ./results/dragon.ascii.pgm
+***********************************************
+
+Thread     0:	    54 [μs]
+Thread     1:	    52 [μs]
+Thread     2:	    23 [μs]
+Thread     3:	    41 [μs]
+Thread     4:	    52 [μs]
+Thread     5:	    39 [μs]
+Thread     6:	    24 [μs]
+Thread     7:	    24 [μs]
+Thread     8:	    25 [μs]
+Thread     9:	    23 [μs]
+Thread    10:	    75 [μs]
+Thread    11:	    23 [μs]
+Thread    12:	    58 [μs]
+Thread    13:	    24 [μs]
+Thread    14:	    61 [μs]
+Thread    15:	    41 [μs]
+Thread    16:	    51 [μs]
+Thread    17:	    24 [μs]
+Thread    18:	    53 [μs]
+Thread    19:	    24 [μs]
+Thread    20:	    42 [μs]
+Thread    21:	    24 [μs]
+Thread    22:	    36 [μs]
+Thread    23:	    23 [μs]
+Thread    24:	    54 [μs]
+Thread    25:	    51 [μs]
+Thread    26:	    24 [μs]
+Thread    27:	    41 [μs]
+Thread    28:	    26 [μs]
+Thread    29:	    66 [μs]
+Thread    30:	    24 [μs]
+Thread    31:	    39 [μs]
+
+Total time:   2227 [μs]
+***********************************************
+Number of threads:            64
+Threads distribution method:  block
+Source file name:  ./sources/dragon.ascii.pgm
+Result file name:  ./results/dragon.ascii.pgm
+***********************************************
+
+Thread     0:	    17 [μs]
+Thread     1:	    32 [μs]
+Thread     2:	    15 [μs]
+Thread     3:	    47 [μs]
+Thread     4:	    19 [μs]
+Thread     5:	    35 [μs]
+Thread     6:	    15 [μs]
+Thread     7:	    46 [μs]
+Thread     8:	    23 [μs]
+Thread     9:	    36 [μs]
+Thread    10:	    45 [μs]
+Thread    11:	    23 [μs]
+Thread    12:	    19 [μs]
+Thread    13:	    14 [μs]
+Thread    14:	    14 [μs]
+Thread    15:	    18 [μs]
+Thread    16:	    32 [μs]
+Thread    17:	    32 [μs]
+Thread    18:	    32 [μs]
+Thread    19:	    34 [μs]
+Thread    20:	    16 [μs]
+Thread    21:	    15 [μs]
+Thread    22:	    15 [μs]
+Thread    23:	    17 [μs]
+Thread    24:	    15 [μs]
+Thread    25:	    15 [μs]
+Thread    26:	    14 [μs]
+Thread    27:	    17 [μs]
+Thread    28:	    14 [μs]
+Thread    29:	    15 [μs]
+Thread    30:	    15 [μs]
+Thread    31:	    18 [μs]
+Thread    32:	    14 [μs]
+Thread    33:	    15 [μs]
+Thread    34:	    14 [μs]
+Thread    35:	    19 [μs]
+Thread    36:	    22 [μs]
+Thread    37:	    22 [μs]
+Thread    38:	    15 [μs]
+Thread    39:	    20 [μs]
+Thread    40:	    15 [μs]
+Thread    41:	    15 [μs]
+Thread    42:	    15 [μs]
+Thread    43:	    18 [μs]
+Thread    44:	    18 [μs]
+Thread    45:	    15 [μs]
+Thread    46:	    15 [μs]
+Thread    47:	    18 [μs]
+Thread    48:	    15 [μs]
+Thread    49:	    15 [μs]
+Thread    50:	    15 [μs]
+Thread    51:	    18 [μs]
+Thread    52:	    15 [μs]
+Thread    53:	    15 [μs]
+Thread    54:	    15 [μs]
+Thread    55:	    18 [μs]
+Thread    56:	    15 [μs]
+Thread    57:	    15 [μs]
+Thread    58:	    15 [μs]
+Thread    59:	    14 [μs]
+Thread    60:	     1 [μs]
+Thread    61:	     2 [μs]
+Thread    62:	     2 [μs]
+Thread    63:	     1 [μs]
+
+Total time:   4215 [μs]
+***********************************************
+Number of threads:            128
+Threads distribution method:  block
+Source file name:  ./sources/dragon.ascii.pgm
+Result file name:  ./results/dragon.ascii.pgm
+***********************************************
+
+Thread     0:	    21 [μs]
+Thread     1:	    18 [μs]
+Thread     2:	    19 [μs]
+Thread     3:	    27 [μs]
+Thread     4:	    23 [μs]
+Thread     5:	     8 [μs]
+Thread     6:	    11 [μs]
+Thread     7:	     8 [μs]
+Thread     8:	    13 [μs]
+Thread     9:	    13 [μs]
+Thread    10:	     7 [μs]
+Thread    11:	    17 [μs]
+Thread    12:	    12 [μs]
+Thread    13:	     8 [μs]
+Thread    14:	    12 [μs]
+Thread    15:	     8 [μs]
+Thread    16:	     8 [μs]
+Thread    17:	     8 [μs]
+Thread    18:	     9 [μs]
+Thread    19:	     7 [μs]
+Thread    20:	     8 [μs]
+Thread    21:	     8 [μs]
+Thread    22:	    11 [μs]
+Thread    23:	     9 [μs]
+Thread    24:	     8 [μs]
+Thread    25:	     8 [μs]
+Thread    26:	     8 [μs]
+Thread    27:	     8 [μs]
+Thread    28:	     9 [μs]
+Thread    29:	     8 [μs]
+Thread    30:	    11 [μs]
+Thread    31:	     8 [μs]
+Thread    32:	     8 [μs]
+Thread    33:	     8 [μs]
+Thread    34:	     8 [μs]
+Thread    35:	     8 [μs]
+Thread    36:	     8 [μs]
+Thread    37:	     9 [μs]
+Thread    38:	    11 [μs]
+Thread    39:	     7 [μs]
+Thread    40:	     7 [μs]
+Thread    41:	     8 [μs]
+Thread    42:	     8 [μs]
+Thread    43:	     8 [μs]
+Thread    44:	     8 [μs]
+Thread    45:	     8 [μs]
+Thread    46:	    12 [μs]
+Thread    47:	     8 [μs]
+Thread    48:	     8 [μs]
+Thread    49:	     8 [μs]
+Thread    50:	     9 [μs]
+Thread    51:	     9 [μs]
+Thread    52:	     8 [μs]
+Thread    53:	    10 [μs]
+Thread    54:	    12 [μs]
+Thread    55:	     9 [μs]
+Thread    56:	    14 [μs]
+Thread    57:	    12 [μs]
+Thread    58:	     7 [μs]
+Thread    59:	     8 [μs]
+Thread    60:	    13 [μs]
+Thread    61:	     8 [μs]
+Thread    62:	    16 [μs]
+Thread    63:	     8 [μs]
+Thread    64:	    13 [μs]
+Thread    65:	    14 [μs]
+Thread    66:	     9 [μs]
+Thread    67:	     8 [μs]
+Thread    68:	     9 [μs]
+Thread    69:	     7 [μs]
+Thread    70:	    13 [μs]
+Thread    71:	     8 [μs]
+Thread    72:	     8 [μs]
+Thread    73:	     8 [μs]
+Thread    74:	     9 [μs]
+Thread    75:	     7 [μs]
+Thread    76:	     8 [μs]
+Thread    77:	     9 [μs]
+Thread    78:	    15 [μs]
+Thread    79:	    13 [μs]
+Thread    80:	    12 [μs]
+Thread    81:	    14 [μs]
+Thread    82:	     8 [μs]
+Thread    83:	     8 [μs]
+Thread    84:	     7 [μs]
+Thread    85:	     8 [μs]
+Thread    86:	    14 [μs]
+Thread    87:	     8 [μs]
+Thread    88:	     8 [μs]
+Thread    89:	     8 [μs]
+Thread    90:	     8 [μs]
+Thread    91:	     8 [μs]
+Thread    92:	     8 [μs]
+Thread    93:	     8 [μs]
+Thread    94:	    13 [μs]
+Thread    95:	     8 [μs]
+Thread    96:	     8 [μs]
+Thread    97:	     8 [μs]
+Thread    98:	    14 [μs]
+Thread    99:	    14 [μs]
+Thread   100:	     9 [μs]
+Thread   101:	     8 [μs]
+Thread   102:	    13 [μs]
+Thread   103:	     8 [μs]
+Thread   104:	     8 [μs]
+Thread   105:	     7 [μs]
+Thread   106:	     9 [μs]
+Thread   107:	     8 [μs]
+Thread   108:	     9 [μs]
+Thread   109:	     8 [μs]
+Thread   110:	    11 [μs]
+Thread   111:	     8 [μs]
+Thread   112:	    12 [μs]
+Thread   113:	     8 [μs]
+Thread   114:	     8 [μs]
+Thread   115:	     8 [μs]
+Thread   116:	     8 [μs]
+Thread   117:	     8 [μs]
+Thread   118:	    12 [μs]
+Thread   119:	     1 [μs]
+Thread   120:	     2 [μs]
+Thread   121:	     1 [μs]
+Thread   122:	     1 [μs]
+Thread   123:	     1 [μs]
+Thread   124:	     1 [μs]
+Thread   125:	     1 [μs]
+Thread   126:	     1 [μs]
+Thread   127:	     1 [μs]
+
+Total time:   8364 [μs]
+***********************************************
+Number of threads:            1
+Threads distribution method:  numbers
+Source file name:  ./sources/saturn.ascii.pgm
+Result file name:  ./results/saturn.ascii.pgm
+***********************************************
+
+Thread     0:	  1841 [μs]
+
+Total time:   2576 [μs]
+***********************************************
+Number of threads:            2
+Threads distribution method:  numbers
+Source file name:  ./sources/saturn.ascii.pgm
+Result file name:  ./results/saturn.ascii.pgm
+***********************************************
+
+Thread     0:	  1395 [μs]
+Thread     1:	   667 [μs]
+
+Total time:   1593 [μs]
+***********************************************
+Number of threads:            4
+Threads distribution method:  numbers
+Source file name:  ./sources/saturn.ascii.pgm
+Result file name:  ./results/saturn.ascii.pgm
+***********************************************
+
+Thread     0:	  1574 [μs]
+Thread     1:	  1555 [μs]
+Thread     2:	  1902 [μs]
+Thread     3:	   778 [μs]
+
+Total time:   2476 [μs]
+***********************************************
+Number of threads:            8
+Threads distribution method:  numbers
+Source file name:  ./sources/saturn.ascii.pgm
+Result file name:  ./results/saturn.ascii.pgm
+***********************************************
+
+Thread     0:	  2015 [μs]
+Thread     1:	   942 [μs]
+Thread     2:	  1483 [μs]
+Thread     3:	  1049 [μs]
+Thread     4:	   649 [μs]
+Thread     5:	   638 [μs]
+Thread     6:	   578 [μs]
+Thread     7:	   520 [μs]
+
+Total time:   2274 [μs]
+***********************************************
+Number of threads:            16
+Threads distribution method:  numbers
+Source file name:  ./sources/saturn.ascii.pgm
+Result file name:  ./results/saturn.ascii.pgm
+***********************************************
+
+Thread     0:	  1615 [μs]
+Thread     1:	  1319 [μs]
+Thread     2:	   614 [μs]
+Thread     3:	   634 [μs]
+Thread     4:	   836 [μs]
+Thread     5:	   992 [μs]
+Thread     6:	   706 [μs]
+Thread     7:	   707 [μs]
+Thread     8:	   653 [μs]
+Thread     9:	   619 [μs]
+Thread    10:	   853 [μs]
+Thread    11:	   736 [μs]
+Thread    12:	   509 [μs]
+Thread    13:	   499 [μs]
+Thread    14:	   560 [μs]
+Thread    15:	   600 [μs]
+
+Total time:   4031 [μs]
+***********************************************
+Number of threads:            32
+Threads distribution method:  numbers
+Source file name:  ./sources/saturn.ascii.pgm
+Result file name:  ./results/saturn.ascii.pgm
+***********************************************
+
+Thread     0:	  1458 [μs]
+Thread     1:	  2213 [μs]
+Thread     2:	  6184 [μs]
+Thread     3:	   706 [μs]
+Thread     4:	   695 [μs]
+Thread     5:	  1134 [μs]
+Thread     6:	   695 [μs]
+Thread     7:	   703 [μs]
+Thread     8:	   750 [μs]
+Thread     9:	   745 [μs]
+Thread    10:	   743 [μs]
+Thread    11:	   778 [μs]
+Thread    12:	   766 [μs]
+Thread    13:	   788 [μs]
+Thread    14:	   799 [μs]
+Thread    15:	   753 [μs]
+Thread    16:	   773 [μs]
+Thread    17:	   745 [μs]
+Thread    18:	  1171 [μs]
+Thread    19:	  1104 [μs]
+Thread    20:	  1089 [μs]
+Thread    21:	   718 [μs]
+Thread    22:	   854 [μs]
+Thread    23:	   666 [μs]
+Thread    24:	   630 [μs]
+Thread    25:	   698 [μs]
+Thread    26:	   629 [μs]
+Thread    27:	   945 [μs]
+Thread    28:	   644 [μs]
+Thread    29:	   730 [μs]
+Thread    30:	   929 [μs]
+Thread    31:	   665 [μs]
+
+Total time:   8346 [μs]
+***********************************************
+Number of threads:            64
+Threads distribution method:  numbers
+Source file name:  ./sources/saturn.ascii.pgm
+Result file name:  ./results/saturn.ascii.pgm
+***********************************************
+
+Thread     0:	  1477 [μs]
+Thread     1:	  1359 [μs]
+Thread     2:	  1798 [μs]
+Thread     3:	   807 [μs]
+Thread     4:	   719 [μs]
+Thread     5:	   672 [μs]
+Thread     6:	   747 [μs]
+Thread     7:	   769 [μs]
+Thread     8:	   762 [μs]
+Thread     9:	   741 [μs]
+Thread    10:	   694 [μs]
+Thread    11:	   743 [μs]
+Thread    12:	   776 [μs]
+Thread    13:	   764 [μs]
+Thread    14:	   734 [μs]
+Thread    15:	   735 [μs]
+Thread    16:	   766 [μs]
+Thread    17:	   780 [μs]
+Thread    18:	   830 [μs]
+Thread    19:	   768 [μs]
+Thread    20:	   728 [μs]
+Thread    21:	   794 [μs]
+Thread    22:	   773 [μs]
+Thread    23:	   860 [μs]
+Thread    24:	   785 [μs]
+Thread    25:	   804 [μs]
+Thread    26:	   795 [μs]
+Thread    27:	   861 [μs]
+Thread    28:	   841 [μs]
+Thread    29:	   802 [μs]
+Thread    30:	   830 [μs]
+Thread    31:	   819 [μs]
+Thread    32:	   854 [μs]
+Thread    33:	   783 [μs]
+Thread    34:	   756 [μs]
+Thread    35:	   887 [μs]
+Thread    36:	   788 [μs]
+Thread    37:	  4105 [μs]
+Thread    38:	   749 [μs]
+Thread    39:	   764 [μs]
+Thread    40:	   892 [μs]
+Thread    41:	   803 [μs]
+Thread    42:	   842 [μs]
+Thread    43:	   785 [μs]
+Thread    44:	   843 [μs]
+Thread    45:	  1164 [μs]
+Thread    46:	   692 [μs]
+Thread    47:	   746 [μs]
+Thread    48:	   757 [μs]
+Thread    49:	   729 [μs]
+Thread    50:	   664 [μs]
+Thread    51:	   733 [μs]
+Thread    52:	   730 [μs]
+Thread    53:	   650 [μs]
+Thread    54:	   663 [μs]
+Thread    55:	   743 [μs]
+Thread    56:	   986 [μs]
+Thread    57:	   744 [μs]
+Thread    58:	   802 [μs]
+Thread    59:	   661 [μs]
+Thread    60:	   815 [μs]
+Thread    61:	   820 [μs]
+Thread    62:	   781 [μs]
+Thread    63:	   750 [μs]
+
+Total time:  13196 [μs]
+***********************************************
+Number of threads:            128
+Threads distribution method:  numbers
+Source file name:  ./sources/saturn.ascii.pgm
+Result file name:  ./results/saturn.ascii.pgm
+***********************************************
+
+Thread     0:	  2461 [μs]
+Thread     1:	  1195 [μs]
+Thread     2:	  1825 [μs]
+Thread     3:	  2302 [μs]
+Thread     4:	  2211 [μs]
+Thread     5:	   712 [μs]
+Thread     6:	   680 [μs]
+Thread     7:	   634 [μs]
+Thread     8:	   604 [μs]
+Thread     9:	   681 [μs]
+Thread    10:	   603 [μs]
+Thread    11:	   643 [μs]
+Thread    12:	   595 [μs]
+Thread    13:	   649 [μs]
+Thread    14:	   680 [μs]
+Thread    15:	   636 [μs]
+Thread    16:	   721 [μs]
+Thread    17:	   684 [μs]
+Thread    18:	   755 [μs]
+Thread    19:	   672 [μs]
+Thread    20:	   614 [μs]
+Thread    21:	   676 [μs]
+Thread    22:	   735 [μs]
+Thread    23:	   721 [μs]
+Thread    24:	   883 [μs]
+Thread    25:	   702 [μs]
+Thread    26:	   760 [μs]
+Thread    27:	   789 [μs]
+Thread    28:	   752 [μs]
+Thread    29:	   692 [μs]
+Thread    30:	   694 [μs]
+Thread    31:	   709 [μs]
+Thread    32:	   674 [μs]
+Thread    33:	   673 [μs]
+Thread    34:	   737 [μs]
+Thread    35:	   765 [μs]
+Thread    36:	   685 [μs]
+Thread    37:	   742 [μs]
+Thread    38:	   729 [μs]
+Thread    39:	   755 [μs]
+Thread    40:	   729 [μs]
+Thread    41:	   752 [μs]
+Thread    42:	   753 [μs]
+Thread    43:	   761 [μs]
+Thread    44:	   734 [μs]
+Thread    45:	   764 [μs]
+Thread    46:	   750 [μs]
+Thread    47:	   787 [μs]
+Thread    48:	   773 [μs]
+Thread    49:	   729 [μs]
+Thread    50:	   783 [μs]
+Thread    51:	   789 [μs]
+Thread    52:	   773 [μs]
+Thread    53:	   737 [μs]
+Thread    54:	   792 [μs]
+Thread    55:	   909 [μs]
+Thread    56:	   819 [μs]
+Thread    57:	   775 [μs]
+Thread    58:	  1103 [μs]
+Thread    59:	   808 [μs]
+Thread    60:	   832 [μs]
+Thread    61:	   826 [μs]
+Thread    62:	   785 [μs]
+Thread    63:	   872 [μs]
+Thread    64:	   795 [μs]
+Thread    65:	   732 [μs]
+Thread    66:	   876 [μs]
+Thread    67:	   808 [μs]
+Thread    68:	   789 [μs]
+Thread    69:	   780 [μs]
+Thread    70:	   788 [μs]
+Thread    71:	   747 [μs]
+Thread    72:	   830 [μs]
+Thread    73:	   857 [μs]
+Thread    74:	   958 [μs]
+Thread    75:	   967 [μs]
+Thread    76:	   795 [μs]
+Thread    77:	   844 [μs]
+Thread    78:	   891 [μs]
+Thread    79:	   843 [μs]
+Thread    80:	   921 [μs]
+Thread    81:	   828 [μs]
+Thread    82:	   817 [μs]
+Thread    83:	   794 [μs]
+Thread    84:	   852 [μs]
+Thread    85:	   850 [μs]
+Thread    86:	  1077 [μs]
+Thread    87:	   805 [μs]
+Thread    88:	   804 [μs]
+Thread    89:	   811 [μs]
+Thread    90:	   897 [μs]
+Thread    91:	   814 [μs]
+Thread    92:	   824 [μs]
+Thread    93:	   812 [μs]
+Thread    94:	   791 [μs]
+Thread    95:	   765 [μs]
+Thread    96:	   806 [μs]
+Thread    97:	   811 [μs]
+Thread    98:	   797 [μs]
+Thread    99:	   804 [μs]
+Thread   100:	   936 [μs]
+Thread   101:	   819 [μs]
+Thread   102:	   722 [μs]
+Thread   103:	   723 [μs]
+Thread   104:	   724 [μs]
+Thread   105:	   842 [μs]
+Thread   106:	   725 [μs]
+Thread   107:	   830 [μs]
+Thread   108:	   796 [μs]
+Thread   109:	   738 [μs]
+Thread   110:	   845 [μs]
+Thread   111:	   732 [μs]
+Thread   112:	   731 [μs]
+Thread   113:	   821 [μs]
+Thread   114:	   935 [μs]
+Thread   115:	   789 [μs]
+Thread   116:	  1004 [μs]
+Thread   117:	   732 [μs]
+Thread   118:	   736 [μs]
+Thread   119:	   901 [μs]
+Thread   120:	   874 [μs]
+Thread   121:	   798 [μs]
+Thread   122:	   990 [μs]
+Thread   123:	   805 [μs]
+Thread   124:	   747 [μs]
+Thread   125:	   805 [μs]
+Thread   126:	   960 [μs]
+Thread   127:	   833 [μs]
+
+Total time:  22969 [μs]
+***********************************************
+Number of threads:            1
+Threads distribution method:  block
+Source file name:  ./sources/saturn.ascii.pgm
+Result file name:  ./results/saturn.ascii.pgm
+***********************************************
+
+Thread     0:	  1659 [μs]
+
+Total time:   2420 [μs]
+***********************************************
+Number of threads:            2
+Threads distribution method:  block
+Source file name:  ./sources/saturn.ascii.pgm
+Result file name:  ./results/saturn.ascii.pgm
+***********************************************
+
+Thread     0:	  1034 [μs]
+Thread     1:	  1057 [μs]
+
+Total time:   1731 [μs]
+***********************************************
+Number of threads:            4
+Threads distribution method:  block
+Source file name:  ./sources/saturn.ascii.pgm
+Result file name:  ./results/saturn.ascii.pgm
+***********************************************
+
+Thread     0:	   643 [μs]
+Thread     1:	   705 [μs]
+Thread     2:	   298 [μs]
+Thread     3:	   285 [μs]
+
+Total time:   1511 [μs]
+***********************************************
+Number of threads:            8
+Threads distribution method:  block
+Source file name:  ./sources/saturn.ascii.pgm
+Result file name:  ./results/saturn.ascii.pgm
+***********************************************
+
+Thread     0:	   198 [μs]
+Thread     1:	   162 [μs]
+Thread     2:	   153 [μs]
+Thread     3:	   162 [μs]
+Thread     4:	   184 [μs]
+Thread     5:	   181 [μs]
+Thread     6:	   161 [μs]
+Thread     7:	   212 [μs]
+
+Total time:   1435 [μs]
+***********************************************
+Number of threads:            16
+Threads distribution method:  block
+Source file name:  ./sources/saturn.ascii.pgm
+Result file name:  ./results/saturn.ascii.pgm
+***********************************************
+
+Thread     0:	   153 [μs]
+Thread     1:	   148 [μs]
+Thread     2:	    87 [μs]
+Thread     3:	    89 [μs]
+Thread     4:	    86 [μs]
+Thread     5:	    89 [μs]
+Thread     6:	    89 [μs]
+Thread     7:	    88 [μs]
+Thread     8:	    94 [μs]
+Thread     9:	    98 [μs]
+Thread    10:	    97 [μs]
+Thread    11:	    90 [μs]
+Thread    12:	    97 [μs]
+Thread    13:	   101 [μs]
+Thread    14:	   119 [μs]
+Thread    15:	   146 [μs]
+
+Total time:   1566 [μs]
+***********************************************
+Number of threads:            32
+Threads distribution method:  block
+Source file name:  ./sources/saturn.ascii.pgm
+Result file name:  ./results/saturn.ascii.pgm
+***********************************************
+
+Thread     0:	    88 [μs]
+Thread     1:	    97 [μs]
+Thread     2:	    64 [μs]
+Thread     3:	   148 [μs]
+Thread     4:	    73 [μs]
+Thread     5:	    91 [μs]
+Thread     6:	    58 [μs]
+Thread     7:	    53 [μs]
+Thread     8:	    95 [μs]
+Thread     9:	    56 [μs]
+Thread    10:	   152 [μs]
+Thread    11:	    62 [μs]
+Thread    12:	    78 [μs]
+Thread    13:	    52 [μs]
+Thread    14:	    76 [μs]
+Thread    15:	    57 [μs]
+Thread    16:	    54 [μs]
+Thread    17:	    45 [μs]
+Thread    18:	    62 [μs]
+Thread    19:	   100 [μs]
+Thread    20:	    84 [μs]
+Thread    21:	    50 [μs]
+Thread    22:	    49 [μs]
+Thread    23:	    47 [μs]
+Thread    24:	    48 [μs]
+Thread    25:	    50 [μs]
+Thread    26:	    48 [μs]
+Thread    27:	    47 [μs]
+Thread    28:	    46 [μs]
+Thread    29:	    70 [μs]
+Thread    30:	    50 [μs]
+Thread    31:	    50 [μs]
+
+Total time:   2817 [μs]
+***********************************************
+Number of threads:            64
+Threads distribution method:  block
+Source file name:  ./sources/saturn.ascii.pgm
+Result file name:  ./results/saturn.ascii.pgm
+***********************************************
+
+Thread     0:	    52 [μs]
+Thread     1:	    34 [μs]
+Thread     2:	    31 [μs]
+Thread     3:	   271 [μs]
+Thread     4:	   182 [μs]
+Thread     5:	   100 [μs]
+Thread     6:	    41 [μs]
+Thread     7:	    32 [μs]
+Thread     8:	    30 [μs]
+Thread     9:	    32 [μs]
+Thread    10:	    22 [μs]
+Thread    11:	    35 [μs]
+Thread    12:	    35 [μs]
+Thread    13:	    59 [μs]
+Thread    14:	    92 [μs]
+Thread    15:	    37 [μs]
+Thread    16:	    48 [μs]
+Thread    17:	    31 [μs]
+Thread    18:	    33 [μs]
+Thread    19:	    33 [μs]
+Thread    20:	    33 [μs]
+Thread    21:	    31 [μs]
+Thread    22:	    31 [μs]
+Thread    23:	    31 [μs]
+Thread    24:	    33 [μs]
+Thread    25:	    30 [μs]
+Thread    26:	    33 [μs]
+Thread    27:	    32 [μs]
+Thread    28:	    32 [μs]
+Thread    29:	    33 [μs]
+Thread    30:	    30 [μs]
+Thread    31:	    31 [μs]
+Thread    32:	    31 [μs]
+Thread    33:	    31 [μs]
+Thread    34:	    32 [μs]
+Thread    35:	    33 [μs]
+Thread    36:	    34 [μs]
+Thread    37:	    62 [μs]
+Thread    38:	    51 [μs]
+Thread    39:	    81 [μs]
+Thread    40:	    52 [μs]
+Thread    41:	    84 [μs]
+Thread    42:	    45 [μs]
+Thread    43:	    43 [μs]
+Thread    44:	    32 [μs]
+Thread    45:	    31 [μs]
+Thread    46:	    55 [μs]
+Thread    47:	    53 [μs]
+Thread    48:	    34 [μs]
+Thread    49:	    33 [μs]
+Thread    50:	    32 [μs]
+Thread    51:	    34 [μs]
+Thread    52:	    32 [μs]
+Thread    53:	    31 [μs]
+Thread    54:	    31 [μs]
+Thread    55:	    29 [μs]
+Thread    56:	    32 [μs]
+Thread    57:	    31 [μs]
+Thread    58:	    29 [μs]
+Thread    59:	    34 [μs]
+Thread    60:	    32 [μs]
+Thread    61:	    36 [μs]
+Thread    62:	    32 [μs]
+Thread    63:	    33 [μs]
+
+Total time:   4453 [μs]
+***********************************************
+Number of threads:            128
+Threads distribution method:  block
+Source file name:  ./sources/saturn.ascii.pgm
+Result file name:  ./results/saturn.ascii.pgm
+***********************************************
+
+Thread     0:	    16 [μs]
+Thread     1:	    20 [μs]
+Thread     2:	     9 [μs]
+Thread     3:	    19 [μs]
+Thread     4:	    16 [μs]
+Thread     5:	    11 [μs]
+Thread     6:	    19 [μs]
+Thread     7:	     9 [μs]
+Thread     8:	    10 [μs]
+Thread     9:	    16 [μs]
+Thread    10:	     8 [μs]
+Thread    11:	    22 [μs]
+Thread    12:	    16 [μs]
+Thread    13:	    12 [μs]
+Thread    14:	    20 [μs]
+Thread    15:	    11 [μs]
+Thread    16:	    12 [μs]
+Thread    17:	    18 [μs]
+Thread    18:	     8 [μs]
+Thread    19:	    21 [μs]
+Thread    20:	    16 [μs]
+Thread    21:	    10 [μs]
+Thread    22:	    14 [μs]
+Thread    23:	     9 [μs]
+Thread    24:	    10 [μs]
+Thread    25:	    15 [μs]
+Thread    26:	     8 [μs]
+Thread    27:	    17 [μs]
+Thread    28:	    27 [μs]
+Thread    29:	    15 [μs]
+Thread    30:	    17 [μs]
+Thread    31:	    20 [μs]
+Thread    32:	    10 [μs]
+Thread    33:	    24 [μs]
+Thread    34:	    10 [μs]
+Thread    35:	    17 [μs]
+Thread    36:	    14 [μs]
+Thread    37:	    14 [μs]
+Thread    38:	    15 [μs]
+Thread    39:	    11 [μs]
+Thread    40:	    10 [μs]
+Thread    41:	    17 [μs]
+Thread    42:	    10 [μs]
+Thread    43:	    66 [μs]
+Thread    44:	    17 [μs]
+Thread    45:	    13 [μs]
+Thread    46:	    18 [μs]
+Thread    47:	    25 [μs]
+Thread    48:	    11 [μs]
+Thread    49:	    16 [μs]
+Thread    50:	     9 [μs]
+Thread    51:	    19 [μs]
+Thread    52:	    25 [μs]
+Thread    53:	    10 [μs]
+Thread    54:	    23 [μs]
+Thread    55:	    19 [μs]
+Thread    56:	    11 [μs]
+Thread    57:	    26 [μs]
+Thread    58:	     9 [μs]
+Thread    59:	    20 [μs]
+Thread    60:	    16 [μs]
+Thread    61:	    21 [μs]
+Thread    62:	    17 [μs]
+Thread    63:	     8 [μs]
+Thread    64:	    18 [μs]
+Thread    65:	    27 [μs]
+Thread    66:	     9 [μs]
+Thread    67:	    17 [μs]
+Thread    68:	    24 [μs]
+Thread    69:	    15 [μs]
+Thread    70:	    18 [μs]
+Thread    71:	    13 [μs]
+Thread    72:	    11 [μs]
+Thread    73:	    25 [μs]
+Thread    74:	     9 [μs]
+Thread    75:	    20 [μs]
+Thread    76:	    29 [μs]
+Thread    77:	    14 [μs]
+Thread    78:	    16 [μs]
+Thread    79:	     9 [μs]
+Thread    80:	    20 [μs]
+Thread    81:	    25 [μs]
+Thread    82:	     9 [μs]
+Thread    83:	    19 [μs]
+Thread    84:	    27 [μs]
+Thread    85:	    10 [μs]
+Thread    86:	    15 [μs]
+Thread    87:	    14 [μs]
+Thread    88:	    10 [μs]
+Thread    89:	    19 [μs]
+Thread    90:	    10 [μs]
+Thread    91:	    22 [μs]
+Thread    92:	    17 [μs]
+Thread    93:	    11 [μs]
+Thread    94:	    17 [μs]
+Thread    95:	    15 [μs]
+Thread    96:	    25 [μs]
+Thread    97:	    27 [μs]
+Thread    98:	     9 [μs]
+Thread    99:	    26 [μs]
+Thread   100:	    14 [μs]
+Thread   101:	    23 [μs]
+Thread   102:	    16 [μs]
+Thread   103:	    24 [μs]
+Thread   104:	    10 [μs]
+Thread   105:	    20 [μs]
+Thread   106:	     9 [μs]
+Thread   107:	    24 [μs]
+Thread   108:	    15 [μs]
+Thread   109:	    14 [μs]
+Thread   110:	    16 [μs]
+Thread   111:	    11 [μs]
+Thread   112:	    20 [μs]
+Thread   113:	    25 [μs]
+Thread   114:	    10 [μs]
+Thread   115:	    25 [μs]
+Thread   116:	    15 [μs]
+Thread   117:	    10 [μs]
+Thread   118:	    18 [μs]
+Thread   119:	    15 [μs]
+Thread   120:	    10 [μs]
+Thread   121:	    17 [μs]
+Thread   122:	    10 [μs]
+Thread   123:	    29 [μs]
+Thread   124:	    15 [μs]
+Thread   125:	    11 [μs]
+Thread   126:	    25 [μs]
+Thread   127:	    12 [μs]
+
+Total time:   6815 [μs]
+***********************************************
+Number of threads:            1
+Threads distribution method:  numbers
+Source file name:  ./sources/surf.ascii.pgm
+Result file name:  ./results/surf.ascii.pgm
+***********************************************
+
+Thread     0:	  2483 [μs]
+
+Total time:   3206 [μs]
+***********************************************
+Number of threads:            2
+Threads distribution method:  numbers
+Source file name:  ./sources/surf.ascii.pgm
+Result file name:  ./results/surf.ascii.pgm
+***********************************************
+
+Thread     0:	  1587 [μs]
+Thread     1:	  1572 [μs]
+
+Total time:   2324 [μs]
+***********************************************
+Number of threads:            4
+Threads distribution method:  numbers
+Source file name:  ./sources/surf.ascii.pgm
+Result file name:  ./results/surf.ascii.pgm
+***********************************************
+
+Thread     0:	  1116 [μs]
+Thread     1:	   698 [μs]
+Thread     2:	  1556 [μs]
+Thread     3:	  1500 [μs]
+
+Total time:   1837 [μs]
+***********************************************
+Number of threads:            8
+Threads distribution method:  numbers
+Source file name:  ./sources/surf.ascii.pgm
+Result file name:  ./results/surf.ascii.pgm
+***********************************************
+
+Thread     0:	   854 [μs]
+Thread     1:	  1237 [μs]
+Thread     2:	   752 [μs]
+Thread     3:	   723 [μs]
+Thread     4:	  1384 [μs]
+Thread     5:	  1095 [μs]
+Thread     6:	   927 [μs]
+Thread     7:	  1216 [μs]
+
+Total time:   3011 [μs]
+***********************************************
+Number of threads:            16
+Threads distribution method:  numbers
+Source file name:  ./sources/surf.ascii.pgm
+Result file name:  ./results/surf.ascii.pgm
+***********************************************
+
+Thread     0:	   940 [μs]
+Thread     1:	   987 [μs]
+Thread     2:	  1000 [μs]
+Thread     3:	   603 [μs]
+Thread     4:	   611 [μs]
+Thread     5:	  1490 [μs]
+Thread     6:	  1028 [μs]
+Thread     7:	   653 [μs]
+Thread     8:	   700 [μs]
+Thread     9:	   788 [μs]
+Thread    10:	   922 [μs]
+Thread    11:	   945 [μs]
+Thread    12:	   840 [μs]
+Thread    13:	   774 [μs]
+Thread    14:	   803 [μs]
+Thread    15:	   896 [μs]
+
+Total time:   4527 [μs]
+***********************************************
+Number of threads:            32
+Threads distribution method:  numbers
+Source file name:  ./sources/surf.ascii.pgm
+Result file name:  ./results/surf.ascii.pgm
+***********************************************
+
+Thread     0:	  1600 [μs]
+Thread     1:	  1037 [μs]
+Thread     2:	   684 [μs]
+Thread     3:	   658 [μs]
+Thread     4:	   779 [μs]
+Thread     5:	  1288 [μs]
+Thread     6:	   655 [μs]
+Thread     7:	   660 [μs]
+Thread     8:	   668 [μs]
+Thread     9:	   737 [μs]
+Thread    10:	   678 [μs]
+Thread    11:	   722 [μs]
+Thread    12:	   736 [μs]
+Thread    13:	   760 [μs]
+Thread    14:	   744 [μs]
+Thread    15:	   758 [μs]
+Thread    16:	   759 [μs]
+Thread    17:	   803 [μs]
+Thread    18:	   799 [μs]
+Thread    19:	   880 [μs]
+Thread    20:	   994 [μs]
+Thread    21:	  1021 [μs]
+Thread    22:	   969 [μs]
+Thread    23:	  1000 [μs]
+Thread    24:	   957 [μs]
+Thread    25:	   904 [μs]
+Thread    26:	   878 [μs]
+Thread    27:	   873 [μs]
+Thread    28:	   856 [μs]
+Thread    29:	  1012 [μs]
+Thread    30:	   983 [μs]
+Thread    31:	  1160 [μs]
+
+Total time:   8523 [μs]
+***********************************************
+Number of threads:            64
+Threads distribution method:  numbers
+Source file name:  ./sources/surf.ascii.pgm
+Result file name:  ./results/surf.ascii.pgm
+***********************************************
+
+Thread     0:	  1181 [μs]
+Thread     1:	  1311 [μs]
+Thread     2:	  1222 [μs]
+Thread     3:	  1375 [μs]
+Thread     4:	  1287 [μs]
+Thread     5:	   850 [μs]
+Thread     6:	   824 [μs]
+Thread     7:	   657 [μs]
+Thread     8:	   768 [μs]
+Thread     9:	   672 [μs]
+Thread    10:	   813 [μs]
+Thread    11:	   670 [μs]
+Thread    12:	   669 [μs]
+Thread    13:	   690 [μs]
+Thread    14:	   730 [μs]
+Thread    15:	   713 [μs]
+Thread    16:	   769 [μs]
+Thread    17:	   683 [μs]
+Thread    18:	   683 [μs]
+Thread    19:	   722 [μs]
+Thread    20:	   787 [μs]
+Thread    21:	   736 [μs]
+Thread    22:	   722 [μs]
+Thread    23:	   748 [μs]
+Thread    24:	   764 [μs]
+Thread    25:	   789 [μs]
+Thread    26:	   773 [μs]
+Thread    27:	   747 [μs]
+Thread    28:	   738 [μs]
+Thread    29:	   763 [μs]
+Thread    30:	   779 [μs]
+Thread    31:	  2402 [μs]
+Thread    32:	  1115 [μs]
+Thread    33:	   797 [μs]
+Thread    34:	   787 [μs]
+Thread    35:	   833 [μs]
+Thread    36:	  2225 [μs]
+Thread    37:	   855 [μs]
+Thread    38:	   911 [μs]
+Thread    39:	   907 [μs]
+Thread    40:	   974 [μs]
+Thread    41:	   991 [μs]
+Thread    42:	  1254 [μs]
+Thread    43:	  1014 [μs]
+Thread    44:	  1001 [μs]
+Thread    45:	  1116 [μs]
+Thread    46:	  1023 [μs]
+Thread    47:	  1019 [μs]
+Thread    48:	  1002 [μs]
+Thread    49:	  1000 [μs]
+Thread    50:	   984 [μs]
+Thread    51:	   969 [μs]
+Thread    52:	   999 [μs]
+Thread    53:	   927 [μs]
+Thread    54:	   905 [μs]
+Thread    55:	   930 [μs]
+Thread    56:	   882 [μs]
+Thread    57:	   889 [μs]
+Thread    58:	   948 [μs]
+Thread    59:	  1141 [μs]
+Thread    60:	  1174 [μs]
+Thread    61:	  1168 [μs]
+Thread    62:	  1275 [μs]
+Thread    63:	  1191 [μs]
+
+Total time:  10707 [μs]
+***********************************************
+Number of threads:            128
+Threads distribution method:  numbers
+Source file name:  ./sources/surf.ascii.pgm
+Result file name:  ./results/surf.ascii.pgm
+***********************************************
+
+Thread     0:	  1142 [μs]
+Thread     1:	  1109 [μs]
+Thread     2:	  3083 [μs]
+Thread     3:	  3304 [μs]
+Thread     4:	  3112 [μs]
+Thread     5:	   684 [μs]
+Thread     6:	   684 [μs]
+Thread     7:	   680 [μs]
+Thread     8:	  1107 [μs]
+Thread     9:	  1216 [μs]
+Thread    10:	   716 [μs]
+Thread    11:	  1015 [μs]
+Thread    12:	   868 [μs]
+Thread    13:	   696 [μs]
+Thread    14:	   966 [μs]
+Thread    15:	   882 [μs]
+Thread    16:	   804 [μs]
+Thread    17:	   714 [μs]
+Thread    18:	   840 [μs]
+Thread    19:	   717 [μs]
+Thread    20:	   853 [μs]
+Thread    21:	   727 [μs]
+Thread    22:	   743 [μs]
+Thread    23:	   960 [μs]
+Thread    24:	   734 [μs]
+Thread    25:	   733 [μs]
+Thread    26:	   799 [μs]
+Thread    27:	   752 [μs]
+Thread    28:	   776 [μs]
+Thread    29:	   774 [μs]
+Thread    30:	   755 [μs]
+Thread    31:	   759 [μs]
+Thread    32:	   753 [μs]
+Thread    33:	   802 [μs]
+Thread    34:	   751 [μs]
+Thread    35:	   751 [μs]
+Thread    36:	   797 [μs]
+Thread    37:	   767 [μs]
+Thread    38:	   779 [μs]
+Thread    39:	   769 [μs]
+Thread    40:	   927 [μs]
+Thread    41:	   789 [μs]
+Thread    42:	   870 [μs]
+Thread    43:	   806 [μs]
+Thread    44:	   837 [μs]
+Thread    45:	   812 [μs]
+Thread    46:	   843 [μs]
+Thread    47:	   821 [μs]
+Thread    48:	   821 [μs]
+Thread    49:	   834 [μs]
+Thread    50:	   860 [μs]
+Thread    51:	   913 [μs]
+Thread    52:	   834 [μs]
+Thread    53:	   869 [μs]
+Thread    54:	   863 [μs]
+Thread    55:	   863 [μs]
+Thread    56:	   965 [μs]
+Thread    57:	   886 [μs]
+Thread    58:	   957 [μs]
+Thread    59:	   855 [μs]
+Thread    60:	   889 [μs]
+Thread    61:	   889 [μs]
+Thread    62:	   892 [μs]
+Thread    63:	   897 [μs]
+Thread    64:	   870 [μs]
+Thread    65:	   938 [μs]
+Thread    66:	   902 [μs]
+Thread    67:	   912 [μs]
+Thread    68:	   918 [μs]
+Thread    69:	   918 [μs]
+Thread    70:	   933 [μs]
+Thread    71:	   899 [μs]
+Thread    72:	   967 [μs]
+Thread    73:	   946 [μs]
+Thread    74:	   953 [μs]
+Thread    75:	   960 [μs]
+Thread    76:	   963 [μs]
+Thread    77:	   969 [μs]
+Thread    78:	   986 [μs]
+Thread    79:	  1081 [μs]
+Thread    80:	  1073 [μs]
+Thread    81:	  1114 [μs]
+Thread    82:	  1105 [μs]
+Thread    83:	  1213 [μs]
+Thread    84:	  1127 [μs]
+Thread    85:	  1132 [μs]
+Thread    86:	  1154 [μs]
+Thread    87:	  1146 [μs]
+Thread    88:	  1186 [μs]
+Thread    89:	  1105 [μs]
+Thread    90:	  1185 [μs]
+Thread    91:	  1184 [μs]
+Thread    92:	  1173 [μs]
+Thread    93:	  1146 [μs]
+Thread    94:	  1143 [μs]
+Thread    95:	  1174 [μs]
+Thread    96:	  1136 [μs]
+Thread    97:	  1089 [μs]
+Thread    98:	  1087 [μs]
+Thread    99:	  1169 [μs]
+Thread   100:	  1101 [μs]
+Thread   101:	  1068 [μs]
+Thread   102:	  1067 [μs]
+Thread   103:	  1561 [μs]
+Thread   104:	  1033 [μs]
+Thread   105:	  1076 [μs]
+Thread   106:	  1030 [μs]
+Thread   107:	   977 [μs]
+Thread   108:	  1033 [μs]
+Thread   109:	  1226 [μs]
+Thread   110:	  1116 [μs]
+Thread   111:	   999 [μs]
+Thread   112:	  1053 [μs]
+Thread   113:	  1818 [μs]
+Thread   114:	  1064 [μs]
+Thread   115:	  1158 [μs]
+Thread   116:	  1110 [μs]
+Thread   117:	  1323 [μs]
+Thread   118:	  1040 [μs]
+Thread   119:	  1093 [μs]
+Thread   120:	  1084 [μs]
+Thread   121:	  1310 [μs]
+Thread   122:	  1210 [μs]
+Thread   123:	  1269 [μs]
+Thread   124:	  1330 [μs]
+Thread   125:	  1392 [μs]
+Thread   126:	  1363 [μs]
+Thread   127:	  1264 [μs]
+
+Total time:  21921 [μs]
+***********************************************
+Number of threads:            1
+Threads distribution method:  block
+Source file name:  ./sources/surf.ascii.pgm
+Result file name:  ./results/surf.ascii.pgm
+***********************************************
+
+Thread     0:	  1446 [μs]
+
+Total time:   2467 [μs]
+***********************************************
+Number of threads:            2
+Threads distribution method:  block
+Source file name:  ./sources/surf.ascii.pgm
+Result file name:  ./results/surf.ascii.pgm
+***********************************************
+
+Thread     0:	  1086 [μs]
+Thread     1:	  1086 [μs]
+
+Total time:   2153 [μs]
+***********************************************
+Number of threads:            4
+Threads distribution method:  block
+Source file name:  ./sources/surf.ascii.pgm
+Result file name:  ./results/surf.ascii.pgm
+***********************************************
+
+Thread     0:	   361 [μs]
+Thread     1:	   541 [μs]
+Thread     2:	   573 [μs]
+Thread     3:	   294 [μs]
+
+Total time:   1331 [μs]
+***********************************************
+Number of threads:            8
+Threads distribution method:  block
+Source file name:  ./sources/surf.ascii.pgm
+Result file name:  ./results/surf.ascii.pgm
+***********************************************
+
+Thread     0:	   167 [μs]
+Thread     1:	   173 [μs]
+Thread     2:	   146 [μs]
+Thread     3:	   137 [μs]
+Thread     4:	   135 [μs]
+Thread     5:	   138 [μs]
+Thread     6:	   145 [μs]
+Thread     7:	   146 [μs]
+
+Total time:    928 [μs]
+***********************************************
+Number of threads:            16
+Threads distribution method:  block
+Source file name:  ./sources/surf.ascii.pgm
+Result file name:  ./results/surf.ascii.pgm
+***********************************************
+
+Thread     0:	   177 [μs]
+Thread     1:	   158 [μs]
+Thread     2:	   162 [μs]
+Thread     3:	   170 [μs]
+Thread     4:	    82 [μs]
+Thread     5:	    81 [μs]
+Thread     6:	   156 [μs]
+Thread     7:	   161 [μs]
+Thread     8:	   353 [μs]
+Thread     9:	   106 [μs]
+Thread    10:	   161 [μs]
+Thread    11:	    90 [μs]
+Thread    12:	    91 [μs]
+Thread    13:	    91 [μs]
+Thread    14:	   231 [μs]
+Thread    15:	   114 [μs]
+
+Total time:   2610 [μs]
+***********************************************
+Number of threads:            32
+Threads distribution method:  block
+Source file name:  ./sources/surf.ascii.pgm
+Result file name:  ./results/surf.ascii.pgm
+***********************************************
+
+Thread     0:	   123 [μs]
+Thread     1:	    87 [μs]
+Thread     2:	    97 [μs]
+Thread     3:	    81 [μs]
+Thread     4:	    68 [μs]
+Thread     5:	    40 [μs]
+Thread     6:	    50 [μs]
+Thread     7:	    88 [μs]
+Thread     8:	    48 [μs]
+Thread     9:	    86 [μs]
+Thread    10:	   150 [μs]
+Thread    11:	    91 [μs]
+Thread    12:	    94 [μs]
+Thread    13:	   153 [μs]
+Thread    14:	    62 [μs]
+Thread    15:	   153 [μs]
+Thread    16:	   115 [μs]
+Thread    17:	    64 [μs]
+Thread    18:	    53 [μs]
+Thread    19:	    48 [μs]
+Thread    20:	    46 [μs]
+Thread    21:	    72 [μs]
+Thread    22:	    53 [μs]
+Thread    23:	    52 [μs]
+Thread    24:	    71 [μs]
+Thread    25:	    47 [μs]
+Thread    26:	    62 [μs]
+Thread    27:	    61 [μs]
+Thread    28:	    85 [μs]
+Thread    29:	    74 [μs]
+Thread    30:	    49 [μs]
+Thread    31:	    57 [μs]
+
+Total time:   3121 [μs]
+***********************************************
+Number of threads:            64
+Threads distribution method:  block
+Source file name:  ./sources/surf.ascii.pgm
+Result file name:  ./results/surf.ascii.pgm
+***********************************************
+
+Thread     0:	    71 [μs]
+Thread     1:	    56 [μs]
+Thread     2:	    50 [μs]
+Thread     3:	    98 [μs]
+Thread     4:	    38 [μs]
+Thread     5:	    22 [μs]
+Thread     6:	    37 [μs]
+Thread     7:	    56 [μs]
+Thread     8:	    29 [μs]
+Thread     9:	    29 [μs]
+Thread    10:	    29 [μs]
+Thread    11:	    28 [μs]
+Thread    12:	    55 [μs]
+Thread    13:	    59 [μs]
+Thread    14:	    32 [μs]
+Thread    15:	    58 [μs]
+Thread    16:	    46 [μs]
+Thread    17:	    31 [μs]
+Thread    18:	    31 [μs]
+Thread    19:	    56 [μs]
+Thread    20:	    35 [μs]
+Thread    21:	    28 [μs]
+Thread    22:	    55 [μs]
+Thread    23:	    37 [μs]
+Thread    24:	    41 [μs]
+Thread    25:	    53 [μs]
+Thread    26:	    34 [μs]
+Thread    27:	    38 [μs]
+Thread    28:	    32 [μs]
+Thread    29:	    30 [μs]
+Thread    30:	    31 [μs]
+Thread    31:	    32 [μs]
+Thread    32:	    35 [μs]
+Thread    33:	    45 [μs]
+Thread    34:	    35 [μs]
+Thread    35:	    33 [μs]
+Thread    36:	    36 [μs]
+Thread    37:	    30 [μs]
+Thread    38:	    30 [μs]
+Thread    39:	    32 [μs]
+Thread    40:	    34 [μs]
+Thread    41:	    31 [μs]
+Thread    42:	    30 [μs]
+Thread    43:	    31 [μs]
+Thread    44:	    32 [μs]
+Thread    45:	    32 [μs]
+Thread    46:	    31 [μs]
+Thread    47:	    32 [μs]
+Thread    48:	    33 [μs]
+Thread    49:	    31 [μs]
+Thread    50:	    31 [μs]
+Thread    51:	    33 [μs]
+Thread    52:	    33 [μs]
+Thread    53:	    30 [μs]
+Thread    54:	    30 [μs]
+Thread    55:	    31 [μs]
+Thread    56:	    33 [μs]
+Thread    57:	    31 [μs]
+Thread    58:	    32 [μs]
+Thread    59:	    30 [μs]
+Thread    60:	    32 [μs]
+Thread    61:	    28 [μs]
+Thread    62:	   302 [μs]
+Thread    63:	    42 [μs]
+
+Total time:   4665 [μs]
+***********************************************
+Number of threads:            128
+Threads distribution method:  block
+Source file name:  ./sources/surf.ascii.pgm
+Result file name:  ./results/surf.ascii.pgm
+***********************************************
+
+Thread     0:	    24 [μs]
+Thread     1:	    34 [μs]
+Thread     2:	    21 [μs]
+Thread     3:	    26 [μs]
+Thread     4:	    15 [μs]
+Thread     5:	    10 [μs]
+Thread     6:	    11 [μs]
+Thread     7:	    26 [μs]
+Thread     8:	    21 [μs]
+Thread     9:	    36 [μs]
+Thread    10:	    19 [μs]
+Thread    11:	    22 [μs]
+Thread    12:	    28 [μs]
+Thread    13:	    25 [μs]
+Thread    14:	    21 [μs]
+Thread    15:	    23 [μs]
+Thread    16:	    22 [μs]
+Thread    17:	    21 [μs]
+Thread    18:	    12 [μs]
+Thread    19:	    24 [μs]
+Thread    20:	    21 [μs]
+Thread    21:	    18 [μs]
+Thread    22:	    19 [μs]
+Thread    23:	    54 [μs]
+Thread    24:	    11 [μs]
+Thread    25:	    19 [μs]
+Thread    26:	    10 [μs]
+Thread    27:	    18 [μs]
+Thread    28:	    17 [μs]
+Thread    29:	    13 [μs]
+Thread    30:	    18 [μs]
+Thread    31:	    25 [μs]
+Thread    32:	    11 [μs]
+Thread    33:	    33 [μs]
+Thread    34:	    10 [μs]
+Thread    35:	    22 [μs]
+Thread    36:	    17 [μs]
+Thread    37:	    14 [μs]
+Thread    38:	    18 [μs]
+Thread    39:	    14 [μs]
+Thread    40:	    11 [μs]
+Thread    41:	    22 [μs]
+Thread    42:	    10 [μs]
+Thread    43:	    22 [μs]
+Thread    44:	    17 [μs]
+Thread    45:	    14 [μs]
+Thread    46:	    18 [μs]
+Thread    47:	    14 [μs]
+Thread    48:	    12 [μs]
+Thread    49:	    20 [μs]
+Thread    50:	    12 [μs]
+Thread    51:	    21 [μs]
+Thread    52:	    16 [μs]
+Thread    53:	    13 [μs]
+Thread    54:	    20 [μs]
+Thread    55:	    14 [μs]
+Thread    56:	    11 [μs]
+Thread    57:	    19 [μs]
+Thread    58:	    10 [μs]
+Thread    59:	    19 [μs]
+Thread    60:	    18 [μs]
+Thread    61:	    15 [μs]
+Thread    62:	    18 [μs]
+Thread    63:	    13 [μs]
+Thread    64:	    11 [μs]
+Thread    65:	    19 [μs]
+Thread    66:	    10 [μs]
+Thread    67:	    21 [μs]
+Thread    68:	    17 [μs]
+Thread    69:	    11 [μs]
+Thread    70:	    18 [μs]
+Thread    71:	    15 [μs]
+Thread    72:	    11 [μs]
+Thread    73:	    20 [μs]
+Thread    74:	    10 [μs]
+Thread    75:	    20 [μs]
+Thread    76:	    17 [μs]
+Thread    77:	    12 [μs]
+Thread    78:	    16 [μs]
+Thread    79:	    12 [μs]
+Thread    80:	    10 [μs]
+Thread    81:	    21 [μs]
+Thread    82:	     9 [μs]
+Thread    83:	    21 [μs]
+Thread    84:	    20 [μs]
+Thread    85:	    13 [μs]
+Thread    86:	    19 [μs]
+Thread    87:	    12 [μs]
+Thread    88:	    11 [μs]
+Thread    89:	    19 [μs]
+Thread    90:	    10 [μs]
+Thread    91:	    18 [μs]
+Thread    92:	    18 [μs]
+Thread    93:	    12 [μs]
+Thread    94:	    18 [μs]
+Thread    95:	    12 [μs]
+Thread    96:	    11 [μs]
+Thread    97:	    19 [μs]
+Thread    98:	    10 [μs]
+Thread    99:	    20 [μs]
+Thread   100:	    26 [μs]
+Thread   101:	    12 [μs]
+Thread   102:	    18 [μs]
+Thread   103:	    13 [μs]
+Thread   104:	    11 [μs]
+Thread   105:	    19 [μs]
+Thread   106:	    10 [μs]
+Thread   107:	    18 [μs]
+Thread   108:	    16 [μs]
+Thread   109:	    10 [μs]
+Thread   110:	    17 [μs]
+Thread   111:	    12 [μs]
+Thread   112:	    12 [μs]
+Thread   113:	    20 [μs]
+Thread   114:	    11 [μs]
+Thread   115:	    17 [μs]
+Thread   116:	    14 [μs]
+Thread   117:	    15 [μs]
+Thread   118:	    18 [μs]
+Thread   119:	    13 [μs]
+Thread   120:	    11 [μs]
+Thread   121:	    20 [μs]
+Thread   122:	     9 [μs]
+Thread   123:	    18 [μs]
+Thread   124:	    16 [μs]
+Thread   125:	    28 [μs]
+Thread   126:	    29 [μs]
+Thread   127:	    15 [μs]
+
+Total time:   7326 [μs]
