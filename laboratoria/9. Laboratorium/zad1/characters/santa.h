@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <pthread.h>
+#include "common.h"
 #include "../lib/libprint.h"
 #include "../lib/librandom.h"
 
@@ -14,15 +15,15 @@ typedef struct santa_args_t {
     long seed;
     int deliveries_count;
 
-    // Constants
-    const int total_reindeer_count;
-    const int min_delivering_time;
-    const int max_delivering_time;
-    const int max_deliveries_count;
+    // Config
+    int total_reindeer_count;
+    int min_delivering_time;
+    int max_delivering_time;
+    int max_deliveries_count;
 
-    const int max_elves_waiting_for_help;
-    const int min_solving_problem_time;
-    const int max_solving_problem_time;
+    int max_elves_waiting_for_help;
+    int min_solving_problem_time;
+    int max_solving_problem_time;
 
     // Shared parameters
     int *elves_waiting_for_help_count; // int pointer (to allow and reflect changes in different threads)
@@ -30,10 +31,15 @@ typedef struct santa_args_t {
     int* elves_waiting_for_help_ids; // array of ints
 
     // Threads-related parameters
-    pthread_mutex_t *mutex;
+    pthread_mutex_t *santa_sleep_mutex;
+    pthread_mutex_t *reindeer_delivery_mutex;
+    pthread_mutex_t *reindeer_wait_mutex;
+    pthread_mutex_t *elves_wait_mutex;
+    pthread_mutex_t *elves_problem_mutex;
     pthread_cond_t *santa_wake_up_condition;
     pthread_cond_t *presents_delivered_condition;
-    pthread_cond_t *elves_problem_solved_condition;
+    pthread_cond_t *santa_solved_problem_condition;
+    pthread_cond_t *santa_started_solving_problem_condition;
 } santa_args_t;
 
 void* santa(void* id_arg);

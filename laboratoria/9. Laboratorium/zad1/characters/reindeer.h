@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <pthread.h>
+#include "common.h"
 #include "../lib/libprint.h"
 #include "../lib/librandom.h"
 
@@ -14,16 +15,18 @@ typedef struct reindeer_args_t {
     int id;
     long seed;
 
-    // Constants
-    const int min_vacation_time;
-    const int max_vacation_time;
-    const int total_reindeer_count;
+    // Config
+    int min_vacation_time;
+    int max_vacation_time;
+    int total_reindeer_count;
 
     // Shared parameters
-    int *reindeer_waining_count; // int pointer (to allow and reflect changes in different threads)
+    int *reindeer_waiting_count; // int pointer (to allow and reflect changes in different threads)
 
     // Threads-related parameters
-    pthread_mutex_t *mutex;
+    pthread_mutex_t *reindeer_wait_mutex;
+    pthread_mutex_t *reindeer_delivery_mutex;
+    pthread_mutex_t *santa_sleep_mutex;
     pthread_cond_t *santa_wake_up_condition;
     pthread_cond_t *presents_delivered_condition;
 } reindeer_args_t;
