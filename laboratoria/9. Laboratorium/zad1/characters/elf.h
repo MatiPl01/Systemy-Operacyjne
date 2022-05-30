@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <pthread.h>
-#include "common.h"
+#include "../lib/libcommon.h"
 #include "../lib/libprint.h"
 #include "../lib/librandom.h"
 
@@ -16,8 +16,8 @@ typedef struct elf_args_t {
     long seed;
 
     // Config
-    int min_working_time;
-    int max_working_time;
+    int min_work_duration;
+    int max_work_duration;
     int max_elves_waiting_for_help;
 
     // Shared parameters
@@ -28,6 +28,7 @@ typedef struct elf_args_t {
     pthread_mutex_t *elves_wait_mutex;
     pthread_mutex_t *elves_problem_mutex;
     pthread_mutex_t *santa_sleep_mutex;
+    pthread_mutex_t *santa_started_solving_problem_mutex;
     pthread_cond_t *santa_wake_up_condition;
     pthread_cond_t *santa_solved_problem_condition;
     pthread_cond_t *santa_started_solving_problem_condition;

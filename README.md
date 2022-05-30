@@ -49,6 +49,4 @@ To repozytorium zawiera rozwiązania zadań z przedmiotu Systemy Operacyjne real
 ## 9. Laboratorium
 ### Wątki - metody synchronizacji
 
-⚙️ Rozwiązanie w trakcie tworzenia - niedługo zostanie wrzucone...
-
 [Rozwiązania 9. laboratorium](https://github.com/MatiPl01/Systemy-Operacyjne/tree/main/laboratoria/9.%20Laboratorium)

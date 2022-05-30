@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <pthread.h>
-#include "common.h"
+#include "../lib/libcommon.h"
 #include "../lib/libprint.h"
 #include "../lib/librandom.h"
 
@@ -17,13 +17,13 @@ typedef struct santa_args_t {
 
     // Config
     int total_reindeer_count;
-    int min_delivering_time;
-    int max_delivering_time;
+    int min_delivery_duration;
+    int max_delivery_duration;
     int max_deliveries_count;
 
     int max_elves_waiting_for_help;
-    int min_solving_problem_time;
-    int max_solving_problem_time;
+    int min_problem_solving_duration;
+    int max_problem_solving_duration;
 
     // Shared parameters
     int *elves_waiting_for_help_count; // int pointer (to allow and reflect changes in different threads)
@@ -36,6 +36,7 @@ typedef struct santa_args_t {
     pthread_mutex_t *reindeer_wait_mutex;
     pthread_mutex_t *elves_wait_mutex;
     pthread_mutex_t *elves_problem_mutex;
+    pthread_mutex_t *santa_started_solving_problem_mutex;
     pthread_cond_t *santa_wake_up_condition;
     pthread_cond_t *presents_delivered_condition;
     pthread_cond_t *santa_solved_problem_condition;

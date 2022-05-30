@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <pthread.h>
-#include "common.h"
+#include "../lib/libcommon.h"
 #include "../lib/libprint.h"
 #include "../lib/librandom.h"
 

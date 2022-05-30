@@ -5,7 +5,7 @@
 #include <stdarg.h>
 #include <string.h>
 
-static const char* const COLORS[5] = {
+static const char* const COLORS[] = {
     "\x1B[0m",
     "\x1B[36m",
     "\x1B[35m",
