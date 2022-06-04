@@ -5,6 +5,8 @@
 #include <stdarg.h>
 #include <string.h>
 
+#define MAX_MSG_LENGTH 1024
+
 static const char* const COLORS[] = {
     "\x1B[0m",
     "\x1B[36m",
