@@ -14,7 +14,7 @@ char* get_input_string(int *i, int argc, char* argv[], char* msg) {
     }
 
     // Otherwise, get an input from a user
-    printf("%s\n>>> ", msg);
+    printf("%s\n%s>>> %s", msg, COLORS[BRIGHT_YELLOW], COLORS[RESET]);
     char* line = "";
     size_t length = 0;
     getline(&line, &length, stdin);
@@ -31,6 +31,20 @@ int get_input_num(int *i, int argc, char* argv[], char* msg) {
     return num;
 }
 
+int set_sa_handler(int sig_no, int sa_flags, void (*handler)(int)) {
+    struct sigaction sa;
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = sa_flags;
+    sa.sa_handler = handler;
+
+    if (sigaction(sig_no, &sa, NULL) == -1) {
+        cperror("Cannot set a signal handler for %d signal\n", sig_no);
+        return -1;
+    }
+
+    return 0;
+}
+
 void free_args(int arg_count, ...) {
     va_list args_list;
     va_start(args_list, arg_count);
@@ -43,6 +57,3 @@ void free_args(int arg_count, ...) {
     va_end(args_list);
 }
 
-int send_message(int socket_fd, message msg) {
-    return send(socket_fd, (const void *) &msg, sizeof(msg), 0) == -1 ? -1 : 0;
-}

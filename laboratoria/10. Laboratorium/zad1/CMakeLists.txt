@@ -12,5 +12,5 @@ add_executable(server server.c)
 add_library(common lib/libcommon.c)
 add_library(print lib/libprint.c)
 
-target_link_libraries(client common)
+target_link_libraries(client print common)
 target_link_libraries(server PRIVATE Threads::Threads m print common)
