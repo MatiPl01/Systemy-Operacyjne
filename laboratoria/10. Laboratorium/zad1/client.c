@@ -3,7 +3,7 @@
 
 
 int epoll_fd;  // Client's epoll file descriptor
-int client_socket_fd = -1;
+int client_socket_fd;
 
 local_state state;
 
@@ -33,58 +33,11 @@ void handle_wait_opponent_msg(void);
 void handle_game_started_msg(game_start *game_start);
 void handle_game_state_msg(game_state *game_state);
 void handle_game_result_msg(game_result game_result);
-
-
-
-
-#define print(x) write(STDOUT_FILENO, x, sizeof(x))
-
-static const char board[] =
-        "\033[0;0H\033[J\033[90m\n"
-        "   1 │ 2 │ 3    you\033[0m (%c) %s\n\033[90m"
-        "  ───┼───┼───      \033[0m (%c) %s\n\033[90m"
-        "   4 │ 5 │ 6 \n"
-        "  ───┼───┼───\n"
-        "   7 │ 8 │ 9 \n\n\033[0m";
-
-void draw_initial_state() {
-    dprintf(STDOUT_FILENO, board,
-            state.symbols[0], state.nicknames[0],
-            state.symbols[1], state.nicknames[1]);
-}
-
-void cell(int x, int y, char* text) {
-    dprintf(STDOUT_FILENO, "\033[s\033[%d;%dH%s\033[u", y * 2 + 2, x * 4 + 4, text);
-}
-
-void render_input_prompt() {
-    if (state.game.curr_turn_symbol != state.symbols[0])
-        print("\033[8;0H\033[J\r [ ] \033[33mWait for your move.\r\033[0m\r\033[2C");
-    else print("\033[8;0H\033[J\r [ ]\033[J\r\033[2C");
-}
-
-void render_update() {
-  static char tmp[12];
-  for (int x = 0; x < 3; x++)
-    for (int y = 0; y < 3; y++) {
-      int c = x + y * 3;
-      if (state.game.board[c] == '\0') {
-        sprintf(tmp, "\033[90m%d\033[0m", c + 1);
-        cell(x, y, tmp);
-      }
-
-      else {
-          char symbol[strlen(C_BLUE) + strlen(C_YELLOW) + strlen(C_RESET) + 2];
-          char s = state.game.board[x + y * 3];
-          sprintf(symbol, "%s%c%s", s == PLAYER_SYMBOLS[0] ? C_BLUE : C_YELLOW, s, C_RESET);
-          cell(x, y, symbol);
-      }
-    }
-  render_input_prompt();
-}
-
-
-
+void handle_disconnect_msg(void);
+void render_initial_gui(void);
+void render_gui_update(void);
+void update_board_cell(int move_idx, char* symbol);
+void render_input_prompt(void);
 
 
 int main(int argc, char* argv[]) {
@@ -143,14 +96,16 @@ void validate_connection_method(void) {
 
 void exit_handler(void) {
     cinfo("Shutting down...\n");
-    if (client_socket_fd != -1) close(client_socket_fd);
+    message msg = { .type = DISCONNECT };
+    write(client_socket_fd, &msg, sizeof msg);
+    shutdown(client_socket_fd, SHUT_RDWR);
+    close(client_socket_fd);
+    close(epoll_fd);
     free_args(3, nickname, connection_method, server_address);
 }
 
 void sigint_handler(int sig_no) {
     // Send the disconnect message to the server
-    message msg = { .type = DISCONNECT };
-    write(client_socket_fd, &msg, sizeof msg);
     cinfo("Received %d signal\n", sig_no);
     exit(EXIT_SUCCESS);
 }
@@ -165,7 +120,7 @@ void set_up_server_connection(void) {
     else connect_to_network_server();
 }
 
-void connect_to_local_server(void) {  // TODO - fix this type of connection - doesnt work at all
+void connect_to_local_server(void) {
     // Create the local server socket address structure (similarly to the server)
     struct sockaddr_un local_server_addr = { .sun_family = AF_UNIX };
     strcpy(local_server_addr.sun_path, server_address);
@@ -201,6 +156,7 @@ void connect_to_server(int domain, struct sockaddr* addr, socklen_t addr_size) {
         cerror("Wrong server address specified\n");
         exit(EXIT_SUCCESS);
     }
+    cinfo("Connected successfully. Sending nickname to the server...\n");
     // Register the client after establishing connection (write the client nickname)
     catch_perror(write(client_socket_fd, nickname, strlen(nickname)));
 }
@@ -212,7 +168,7 @@ void set_up_event_handlers(void) {
     // (this optimizes the board redrawing by doing so only if it is necessary - if there is a pending input event)
     struct epoll_event epoll_stdin_event = {
         .events = EPOLLIN | EPOLLPRI,  // TODO - Check if EPOLLPRI is necessary
-        .data.fd = STDIN_FILENO  // Watch the client process standard input - board updated will be sent there
+        .data.fd = STDIN_FILENO  // Watch the client process standard input - board updates will be sent there
     };
     catch_perror(epoll_ctl(epoll_fd, EPOLL_CTL_ADD, STDIN_FILENO, &epoll_stdin_event));
     // Set up the server responses event handler
@@ -249,20 +205,18 @@ void handle_epoll_event(struct epoll_event *epoll_event) {
 
 void handle_stdin_event(void) {
     int c;
-    // Skip not numerical input
     if (scanf("%d", &c) != 1) {
-        int _;
-        // Read the whole invalid input from the stdin (empty the stdin)
-        while ((_ = getchar()) != EOF && _ != '\n');
+        char _;
+        while ((_ = getchar()) != EOF && _ != '\n');  // skip invalid input
         render_input_prompt();
-    } else {
-        // Reset the input prompt
-        render_input_prompt();
-        // Check if the input number is correct
-        printf("MOVE: %c\n", c);
-        if (c < 1 || c > 9 || state.game.board[c - 1] != '\0') return;
-        // Otherwise, if the input is correct, send the message to the server
-        message msg = { .type = MOVE, .data.move_id = c };
+        return;
+    }
+    render_input_prompt();
+    if (c < 1 || c > 9) return;
+
+    if (state.game.board[c - 1] == '\0') {
+        message msg = { .type = MOVE };
+        msg.data.move_id = c;
         catch_perror(write(client_socket_fd, &msg, sizeof msg));
     }
 }
@@ -293,8 +247,12 @@ void handle_response_event(void) {
             break;
         case GAME_RESULT:
             handle_game_result_msg(msg.data.game_result);
+            break;
+        case DISCONNECT:
+            handle_disconnect_msg();
         default:
-            cwarn("Received unrecognized response message type from the server\n");
+            cerror("Received unrecognized response message type from the server\n");
+            exit(EXIT_FAILURE);
     }
 }
 
@@ -305,7 +263,8 @@ void handle_server_full_msg(void) {
 
 void handle_username_taken_msg(void) {
     cwarn("Nickname %s%s%s is already taken\n", C_BRIGHT_MAGENTA, nickname, C_WARN);
-    close(EXIT_SUCCESS);
+    close(client_socket_fd);
+    exit(EXIT_SUCCESS);
 }
 
 void handle_ping_msg(message *msg) {
@@ -321,30 +280,72 @@ void handle_game_started_msg(game_start *game_start) {
     state.nicknames[1] = game_start->opponent;
     state.symbols[0] = game_start->symbol;
     state.symbols[1] = PLAYER_SYMBOLS[0] == game_start->symbol ? PLAYER_SYMBOLS[1] : PLAYER_SYMBOLS[0];
-    draw_initial_state();
+    render_initial_gui();
 }
 
 void handle_game_state_msg(game_state *game_state) {
     // Copy the game state to the local state structure
-    memcpy(&state.game, game_state, sizeof *game_state);  // TODO - check if free is necessary
+    memcpy(&state.game, game_state, sizeof *game_state);
     // Refresh the game view
-    render_update();
+    render_gui_update();
 }
 
 void handle_game_result_msg(game_result game_result) {
     switch (game_result) {
         case WON:
-            print("\033[8;0H\033[J\r You won ^.^\33[J\n\n");
-            break;
-        case DRAW:
-            print("\033[8;0H\033[J\r It's a draw O_o\33[J\n\n");
+            dprintf(STDOUT_FILENO, "\033[8;0H\033[J\r You \x1b[92mWON\33[J\n\n");
             break;
         case LOST:
-            print("\033[8;0H\033[J\r You lost T_T\n\n");
+            dprintf(STDOUT_FILENO, "\033[8;0H\033[J\r You \x1b[91mLOST\n\n");
             break;
-        default:
-            return;
+        case DRAW:
+            dprintf(STDOUT_FILENO, "\033[8;0H\033[J\r It's a \x1B[33mDRAW\33[J\n\n");
+            break;
+        default: return;
     }
     // Exit the game
     exit(EXIT_SUCCESS);
+}
+
+void handle_disconnect_msg(void) {
+    // Close the client connection if the client was disconnected from the server
+    ccritical("\033[8;0H\033[J\rYou have been disconnected from the server\n");
+    exit(EXIT_SUCCESS);
+}
+
+void render_initial_gui(void) {
+    char symbol1[32];
+    char symbol2[32];
+    csprintf(symbol1, PLAYER_COLORS[state.symbols[0] == PLAYER_SYMBOLS[1]], "%c", state.symbols[0]);
+    csprintf(symbol2, PLAYER_COLORS[state.symbols[1] == PLAYER_SYMBOLS[1]], "%c", state.symbols[1]);
+    dprintf(STDOUT_FILENO, board, symbol1, state.nicknames[0], symbol2, state.nicknames[1]);
+}
+
+void render_gui_update(void) {
+    char symbol[32];
+    for (int i = 0; i < 9; i++) {
+        if (state.game.board[i] == '\0') {
+            sprintf(symbol, "\033[90m%d\033[0m", i + 1);
+            update_board_cell(i, symbol);
+        } else {
+            char s = state.game.board[i];
+            csprintf(symbol, PLAYER_COLORS[s == PLAYER_SYMBOLS[1]], "%c", s);
+            update_board_cell(i, symbol);
+        }
+    }
+    render_input_prompt();
+}
+
+void update_board_cell(int move_idx, char* symbol) {
+    int r = move_idx / 3;
+    int c = move_idx % 3;
+    dprintf(STDOUT_FILENO, "\033[s\033[%d;%dH%s\033[u", r * 2 + 2, c * 4 + 4, symbol);
+}
+
+void render_input_prompt(void) {
+    if (state.game.curr_turn_symbol != state.symbols[0]) {
+        dprintf(STDOUT_FILENO, "\033[8;0H\033[J\r [ ] \033[33mWait for the opponent's move.\r\033[0m\r\033[2C");
+    } else {
+        dprintf(STDOUT_FILENO, "\033[8;0H\033[J\r [ ]\033[J\r\033[2C");
+    }
 }

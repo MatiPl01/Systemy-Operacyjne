@@ -11,7 +11,7 @@ const int MAX_EVENTS_COUNT = 16;
 typedef struct connection connection;
 
 typedef struct client {
-    char nickname[MAX_NICKNAME_LENGTH];
+    char nickname[MAX_NICKNAME_LENGTH + 1];
     char symbol;
     connection *opponent_connection;
     game_state *game_state;

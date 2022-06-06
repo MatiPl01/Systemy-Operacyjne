@@ -6,7 +6,7 @@ C_OPT=-O0
 C_FLAGS=-Wall -std=gnu11 -g $(C_OPT)
 
 # Linked libraries
-LIBRARIES=-lcommon -lcfprint -lpthread
+LIBRARIES=-lcommon -lcprint -lpthread
 # Lib directory path
 LIB_DIR=./lib
 # File names
@@ -23,7 +23,7 @@ shared_libs:
 
 .PHONY: compile
 compile: shared_libs
-	for FILE_NAME in $(FILE_NAMES); do \
+	@for FILE_NAME in $(FILE_NAMES); do \
 		$(CC) $(C_FLAGS) $$FILE_NAME.c -Wl,-R $(LIB_DIR) -L$(LIB_DIR) $(LIBRARIES) -o $$FILE_NAME; \
 	done; \
 

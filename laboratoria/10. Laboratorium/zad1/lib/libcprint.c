@@ -14,6 +14,15 @@ void cfprintf(FILE *f_ptr, char* color, char* format, ...) {
     print_in_color(f_ptr, color, format, args);
 }
 
+void csprintf(char* buff, char* color, char* format, ...) {
+    char color_format[strlen(color) + strlen(C_RESET) + strlen(format) + 1];
+    sprintf(color_format, "%s%s%s", color, format, C_RESET);
+    va_list args;
+    va_start(args, format);
+    vsprintf(buff, color_format, args);
+    va_end(args);
+}
+
 void cprintf(char* color, char* format, ...) {
     va_list args;
     va_start(args, format);

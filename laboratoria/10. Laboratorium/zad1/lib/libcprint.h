@@ -27,6 +27,7 @@
 
 void print_in_color(FILE *f_ptr, char* color, char* format, va_list args);
 void cfprintf(FILE *f_ptr, char* color, char* format, ...);
+void csprintf(char* buff, char* color, char* format, ...);
 void cprintf(char* color, char* format, ...);
 void cperror(char* format, ...);
 void cerror(char* format, ...);

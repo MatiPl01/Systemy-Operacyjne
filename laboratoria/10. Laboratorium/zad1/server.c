@@ -34,12 +34,12 @@ int remove_connection(connection *conn);
 _Noreturn void* requests_handler(void);
 void handle_epoll_event(struct epoll_event *epoll_event);
 void handle_new_connection_request(event *request_event);
-connection* create_connection(int connection_socket_fd);
+connection* create_connection(int client_socket_fd);
 connection* find_empty_connection(void);
 void handle_client_request(event *request_event);
 void register_client(connection *conn);
 void create_client_struct(connection *conn, char* nickname);
-bool is_valid_nickname(char* nickname);
+bool is_nickname_available(char* nickname);
 int start_game_between_clients(connection *conn1, connection *conn2);
 void assign_random_symbols(char *symbol1, char *symbol2);
 int send_game_start_msg(connection *conn, char symbol);
@@ -87,7 +87,24 @@ void get_input_args(int argc, char* argv[]) {
 
 void exit_handler(void) {
     cinfo("Shutting down...\n");
+    cinfo("Stopping server threads...\n");
+    pthread_cancel(ping_thread);
+    pthread_cancel(requests_thread);
+    pthread_mutex_unlock(&connections_mutex);
+    cinfo("Disconnecting clients...\n");
+    pthread_mutex_lock(&connections_mutex);
+    for (int i = 0; i < MAX_CONNECTIONS; i++) {
+        if (connections[i].status != EMPTY) remove_connection(&connections[i]);
+    }
+    cinfo("Closing sockets and event listeners...\n");
+    close(epoll_fd);
+    shutdown(local_socket_fd, SHUT_RDWR);
+    shutdown(network_socket_fd, SHUT_RDWR);
+    close(local_socket_fd);
+    close(network_socket_fd);
     free_args(1, socket_path);
+    unlink(socket_path);
+    cinfo("Server was successfully closed. Bye! :)\n");
 }
 
 void sigint_handler(int sig_no) {
@@ -110,11 +127,11 @@ void init_local_server(void) {
     // Create the local server socket address structure
     struct sockaddr_un local_server_addr = { .sun_family = AF_UNIX };
     strcpy(local_server_addr.sun_path, socket_path);
+    // Unlink the local server socket path
+    unlink(socket_path);
     // Open and initialize the local server socket
     local_socket_fd = catch_perror(socket(AF_UNIX, SOCK_STREAM, 0));
     init_server_socket(local_socket_fd, (struct sockaddr*) &local_server_addr, sizeof local_server_addr);
-    // Unlink the local server socket path
-    catch_perror(unlink(socket_path));
 }
 
 void init_network_server(void) {
@@ -135,8 +152,9 @@ void init_server_socket(int socket_fd, struct sockaddr *addr, socklen_t addr_siz
     // Start listening requests on the server socket
     catch_perror(listen(socket_fd, MAX_CONNECTIONS));
     // Set up the new connection event (enable new connection requests)
-    struct epoll_event epoll_event = { .events = EPOLLIN | EPOLLPRI };  // TODO - check if EPOLLPRI is necessary
-    event *event = epoll_event.data.ptr = malloc(sizeof *event);  // TODO - check if malloc is necessary
+    struct epoll_event epoll_event = { .events = EPOLLIN | EPOLLPRI };
+    // Specify the event data format (format which will be received when event is caught)
+    event *event = epoll_event.data.ptr = malloc(sizeof *event);
     event->type = NEW_CONNECTION;
     event->data.server_socket_fd = socket_fd;
     catch_perror(epoll_ctl(epoll_fd, EPOLL_CTL_ADD, socket_fd, &epoll_event));
@@ -162,12 +180,12 @@ _Noreturn void* ping_handler(void) {
         if (connections_count > 0) ret_val = ping_connections();
         pthread_mutex_unlock(&connections_mutex);
         if (ret_val == -1) exit_error("Something went wrong while pinging clients\n");
+        pthread_testcancel();
     }
 }
 
 int ping_connections(void) {
     cinfo("Pinging clients...\n");
-
     for (int i = 0; i < MAX_CONNECTIONS; i++) {
         // Continue if there is no connection on the current slot
         if (connections[i].status == EMPTY) continue;
@@ -176,59 +194,63 @@ int ping_connections(void) {
         if (connections[i].status == PINGED) {
             char* nickname = connections[i].client ? connections[i].client->nickname : UNREGISTERED_NICKNAME;
             cwarn("%s%s%s is not responding\n", C_BRIGHT_MAGENTA, nickname, C_WARN);
-            if (remove_connection(&connections[i]) == -1) return -1;
+            return remove_connection(&connections[i]);
         }
         // Otherwise, ping the current connection
-        else if (ping_connection(connections[i]) == -1) return -1;
+        else return ping_connection(connections[i]);
     }
     return 0;
 }
 
 int ping_connection(connection connection) {
     char* nickname = connection.client ? connection.client->nickname : UNREGISTERED_NICKNAME;
-    cinfo("Pinging %s%s%s...\n", C_BRIGHT_MAGENTA, nickname, C_INFO);
+    cinfo("Pinging %s%s%s client...\n", C_BRIGHT_MAGENTA, nickname, C_INFO);
     message msg = { .type = PING };
     connection.status = PINGED;
     if (write(connection.client_socket_fd, &msg, sizeof msg) == -1) {
-        cperror("Cannot to ping %s%s%s\n", C_BRIGHT_MAGENTA, nickname, C_ERROR);
+        cperror("Cannot ping %s%s%s\n", C_BRIGHT_MAGENTA, nickname, C_ERROR);
         return -1;
     }
     return 0;
 }
 
-// TODO - debug this function
-int remove_connection(connection *conn) {  // TODO - fix removing connection when there is a nickname collision
+int remove_connection(connection *conn) {
+    // Send the disconnect message to the client
+    static message msg = { .type = DISCONNECT };
+    if (write(conn->client_socket_fd, &msg, sizeof msg) == -1) return -1;
     // Print info
     client *client = conn->client;
     char* nickname = client ? client->nickname : UNREGISTERED_NICKNAME;
     cinfo("Removing %s%s%s connection...\n", C_BRIGHT_MAGENTA, nickname, C_INFO);
     // Remove connection data
-    if (client) {
-        connection *opponent_connection = client->opponent_connection;
-//        if (conn == opponent_connection) waiting_client_connection = NULL;
-        /*else*/ if (opponent_connection) {
-            client->opponent_connection = NULL;
-            opponent_connection->client->opponent_connection = NULL;
-            remove_connection(opponent_connection);  // TODO - maybe send some message that opponent is not responding and therefore this client is also kicked
-            free(opponent_connection);
-        }
-    }
-    int connection_socket_fd = conn->client_socket_fd;
+    if (conn == waiting_client_connection) waiting_client_connection = NULL;
+    int client_socket_fd = conn->client_socket_fd;
     conn->client = NULL;
     conn->status = EMPTY;
     conn->client_socket_fd = -1;
-    // Close the client connection socket
-    if (close(connection_socket_fd) == -1) {
-        cperror("Cannot close %s%s%s the connection\n", C_BRIGHT_MAGENTA, nickname, C_ERROR);
-        free(client);
-        return -1;
+    // Remove the opponent connection (if exists)
+    if (client) {
+        connection *opponent_conn = client->opponent_connection;
+        // Prevent recursive checking connections of both clients
+        client->opponent_connection = NULL;
+        if (opponent_conn) {
+            free(client->game_state);
+            opponent_conn->client->opponent_connection = NULL;
+            if (remove_connection(opponent_conn) == -1) return -1;
+        }
     }
-    // Check if the removed connection is the waiting connection
-    if (waiting_client_connection == conn) waiting_client_connection = NULL;
+    // Delete the client connection from the server epoll events
+    catch_perror(epoll_ctl(epoll_fd, EPOLL_CTL_DEL, client_socket_fd, NULL));
+    // Close the client connection socket
+    int ret_val = 0;
+    if (close(client_socket_fd) == -1) {
+        cperror("Cannot close %s%s%s the connection\n", C_BRIGHT_MAGENTA, nickname, C_ERROR);
+        ret_val = -1;
+    }
     // Decrement the number of current connections
     connections_count--;
     free(client);
-    return 0;
+    return ret_val;
 }
 
 _Noreturn void* requests_handler(void) {
@@ -238,6 +260,7 @@ _Noreturn void* requests_handler(void) {
     while (true) {
         int event_count = catch_perror(epoll_wait(epoll_fd, events, MAX_EVENTS_COUNT, -1));
         for (int i = 0; i < event_count; i++) handle_epoll_event(&events[i]);
+        pthread_testcancel();
     }
 }
 
@@ -258,35 +281,35 @@ void handle_epoll_event(struct epoll_event *epoll_event) {
 }
 
 void handle_new_connection_request(event *request_event) {
-    int connection_socket_fd = catch_perror(accept(request_event->data.server_socket_fd, NULL, NULL));
+    int client_socket_fd = catch_perror(accept(request_event->data.server_socket_fd, NULL, NULL));
     connection *conn;
     // Inform a client that the new connection could not be established if the server is full
-    if (!(conn = create_connection(connection_socket_fd))) {
+    if (!(conn = create_connection(client_socket_fd))) {
         cwarn("Could not establish the new connection. Server is overloaded\n");
         message msg = { .type = SERVER_FULL };
         // Send a message to the client
-        catch_perror(write(connection_socket_fd, &msg, sizeof msg));
+        catch_perror(write(client_socket_fd, &msg, sizeof msg));
         // Close the client connection
-        catch_perror(close(connection_socket_fd));
+        catch_perror(close(client_socket_fd));
     // Otherwise, if the server is not full, start listening to the client requests
     } else {
         cinfo("Received a new connection request\n");
         // Create the event struct
-        event *client_event = malloc(sizeof *client_event);  // TODO - check if malloc is necessary
+        struct epoll_event epoll_event = { .events = EPOLLIN | EPOLLET | EPOLLHUP };
+        event *client_event = epoll_event.data.ptr = malloc(sizeof *client_event);
         client_event->type = CLIENT_EVENT;
         client_event->data.connection = conn;  // Associate the new client connection struct with the new event
-        struct epoll_event epoll_event = { .events = EPOLLIN | EPOLLET | EPOLLHUP, .data = { client_event } };  // TODO - check if all these flags are necessary
         // Add this event to the listened events
-        catch_perror(epoll_ctl(epoll_fd, EPOLL_CTL_ADD, connection_socket_fd, &epoll_event));
+        catch_perror(epoll_ctl(epoll_fd, EPOLL_CTL_ADD, client_socket_fd, &epoll_event));
     }
 }
 
-connection* create_connection(int connection_socket_fd) {
+connection* create_connection(int client_socket_fd) {
     connection *conn = NULL;
     pthread_mutex_lock(&connections_mutex);
     conn = find_empty_connection();
     if (conn) {
-        conn->client_socket_fd = connection_socket_fd;
+        conn->client_socket_fd = client_socket_fd;
         conn->status = CONNECTED;
         // Increment the number of current connections
         connections_count++;
@@ -331,30 +354,39 @@ void handle_client_request(event *request_event) {
 }
 
 void register_client(connection *conn) {
+    int ret_val = 0;
     // Read the client nickname from the client socket
     char nickname[MAX_NICKNAME_LENGTH];
-    if (read(conn->client_socket_fd, nickname, MAX_NICKNAME_LENGTH) == -1) {
+    size_t read_length = read(conn->client_socket_fd, nickname, MAX_NICKNAME_LENGTH);
+    if (read_length == -1 || read_length > MAX_NICKNAME_LENGTH) {
         cperror("Cannot read the nickname of the registering client\n");
-        remove_connection(conn);
-        return;
-    }
-    pthread_mutex_lock(&connections_mutex);
-    // Check if the specified nickname is not already taken
-    if (is_valid_nickname(nickname)) {
-        create_client_struct(conn, nickname);
-    // Inform a client that the nickname is already taken and close client connection
-    } else {
-        cwarn("Nickname %s%s%s is already taken. Rejected registration\n", C_BRIGHT_MAGENTA, nickname, C_WARN);
-        message msg = { .type = USERNAME_TAKEN };
-        if (write(conn->client_socket_fd, &msg, sizeof msg) == -1) {
-            cperror("Cannot send a message to the rejected client\n");
+        ret_val = -1;
+    } else nickname[read_length] = '\0';
+
+    if (ret_val != -1) {
+        // Check if the specified nickname is not already taken
+        if (is_nickname_available(nickname)) create_client_struct(conn, nickname);
+        // Inform a client that the nickname is already taken and close client connection
+        else {
+            cwarn("Nickname %s%s%s is already taken. Rejected registration\n", C_BRIGHT_MAGENTA, nickname, C_WARN);
+            message msg = { .type = USERNAME_TAKEN };
+            if (write(conn->client_socket_fd, &msg, sizeof msg) == -1) {
+                cperror("Cannot send a message to the rejected client\n");
+            }
+            // Set this value to -1 to ensure that the client connection will be removed
+            ret_val = -1;
         }
-        remove_connection(conn);
     }
-    pthread_mutex_unlock(&connections_mutex);
+    // Remove the client connection if something went wrong
+    if (ret_val == -1) {
+        pthread_mutex_lock(&connections_mutex);
+        remove_connection(conn);
+        pthread_mutex_unlock(&connections_mutex);
+    }
 }
 
 void create_client_struct(connection *conn, char* nickname) {
+    pthread_mutex_lock(&connections_mutex);
     // Allocate memory for a client
     if (!(conn->client = calloc(1, sizeof(client)))) {
         cperror("Cannot allocate memory for the client struct\n");
@@ -375,16 +407,13 @@ void create_client_struct(connection *conn, char* nickname) {
             );
             remove_connection(conn);
         }
-        waiting_client_connection = NULL;
     }
     // Otherwise, save the current client connection as waiting for an opponent
-    else if (wait_for_opponent(conn) == -1) {
-        // Again, remove connection if something went wrong
-        remove_connection(conn);
-    }
+    else if (wait_for_opponent(conn) == -1) remove_connection(conn);
+    pthread_mutex_unlock(&connections_mutex);
 }
 
-bool is_valid_nickname(char* nickname) {
+bool is_nickname_available(char* nickname) {
     if (strcmp(nickname, UNREGISTERED_NICKNAME) == 0) return false;
     // Check if the nickname is already taken
     for (int i = 0; i < MAX_CONNECTIONS; i++) {
@@ -396,23 +425,19 @@ bool is_valid_nickname(char* nickname) {
 }
 
 int start_game_between_clients(connection *conn1, connection *conn2) {
+    waiting_client_connection = NULL;
     client *client1 = conn1->client;
     client *client2 = conn2->client;
-    cinfo("Starting game between %s%s%s and %s%s%s...\n",
-          C_BRIGHT_MAGENTA, client1->nickname, C_INFO,
-          C_BRIGHT_MAGENTA, client2->nickname, C_INFO
-    );
     // Store opponent connections
     client1->opponent_connection = conn2;
     client2->opponent_connection = conn1;
     // Assign random symbols to the clients
-    char symbol1, symbol2;
-    assign_random_symbols(&symbol1, &symbol2);
-    client1->symbol = symbol1;
-    client2->symbol = symbol2;
+    assign_random_symbols(&client1->symbol, &client2->symbol);;
+    // Print info
+    print_game_update_msg(conn1, "Starting game...\n");
     // Send game start messages to the clients
-    if (send_game_start_msg(conn1, symbol1) == -1
-     || send_game_start_msg(conn2, symbol2) == -1) {
+    if (send_game_start_msg(conn1, client1->symbol) == -1
+     || send_game_start_msg(conn2, client2->symbol) == -1) {
         return -1;
     }
     // Create the game state object
@@ -422,12 +447,10 @@ int start_game_between_clients(connection *conn1, connection *conn2) {
         return -1;
     }
     // Choose the starting player symbol and send the game state to the clients
-    char start_symbol = PLAYER_SYMBOLS[rand() % 2];
-    game_state->curr_turn_symbol = start_symbol;
+    game_state->curr_turn_symbol = PLAYER_SYMBOLS[rand() % 2];
     game_state->remaining_moves = 9;
     // A function below sends the game state update to both connected clients
-    if (send_game_state(conn1)) return -1;
-    return 0;
+    return send_game_state(conn1);
 }
 
 void assign_random_symbols(char *symbol1, char *symbol2) {
@@ -451,7 +474,7 @@ int send_game_start_msg(connection *conn, char symbol) {
 int wait_for_opponent(connection *conn) {
     waiting_client_connection = conn;
     char* nickname = conn->client->nickname;
-    cinfo("%s%s%s is waiting for an opponent\n", C_BRIGHT_MAGENTA, nickname, C_INFO);
+    cinfo("Client %s%s%s is waiting for an opponent\n", C_BRIGHT_MAGENTA, nickname, C_INFO);
     // Send the message indicating that the client must wait for an opponent
     message msg = { .type = WAIT_OPPONENT };
     if (write(conn->client_socket_fd, &msg, sizeof msg) == -1) {
@@ -483,6 +506,7 @@ void handle_client_move_msg(connection *conn, msg_data data) {
     client* opponent_client = curr_client->opponent_connection->client;
     game_state *game_state = curr_client->game_state;
     int move_id = data.move_id;
+
     // Check if the client is allowed to make such a move
     if (is_valid_move(game_state, move_id, curr_client->symbol)) {
         // Update the game state board (shared between both playing clients)
@@ -490,14 +514,18 @@ void handle_client_move_msg(connection *conn, msg_data data) {
         game_state->curr_turn_symbol = opponent_client->symbol;
         game_state->remaining_moves--;
         print_game_update_msg(conn, "Registered %s%s%s move\n", C_BRIGHT_MAGENTA, curr_client->nickname, C_BRIGHT_GREEN);
-        // Kick the clients if the game state update cannot be sent
-        if (send_game_state(conn) == -1) remove_connection(conn);
-        // Check if the game is finished
-        game_result game_result = get_game_result(game_state, move_id);
-        if (game_result == PLAYING) return;
-        // If the game result is not null (the game has finished), send the result to the clients
-        print_game_result_msg(conn, game_result);
-        if (send_game_result(conn, game_result) == -1) remove_connection(conn);  // Again, kick if the result cannot be sent
+        // Send the current game state
+        if (send_game_state(conn) != -1) {
+            // If the game result is not equal to PLAYING (the game has finished), send the result to the clients
+            game_result game_result = get_game_result(game_state, move_id);
+            if (game_result == PLAYING) return;
+            send_game_result(conn, game_result);
+            print_game_result_msg(conn, game_result);
+        }
+        // Close clients connection if the game has finished or something went wrong
+        pthread_mutex_lock(&connections_mutex);
+        remove_connection(conn);
+        pthread_mutex_unlock(&connections_mutex);
     }
 }
 
@@ -506,10 +534,8 @@ bool is_valid_move(game_state *game_state, int move_id, char client_symbol) {
     if (game_state->curr_turn_symbol != client_symbol) return false;
     // The client specified wrong move id
     if (move_id < 1 || move_id > 9) return false;
-    // The client selected the field that is not empty
-    if (game_state->board[move_id] != '\0') return false;
-    // Everything is correct
-    return true;
+    // Check if the selected field is empty
+    return game_state->board[move_id - 1] == '\0';
 }
 
 void print_game_update_msg(connection *conn, char* format, ...) {

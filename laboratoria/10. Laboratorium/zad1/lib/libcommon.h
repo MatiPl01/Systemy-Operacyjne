@@ -48,6 +48,7 @@ typedef enum msg_type {
     SERVER_FULL,
     USERNAME_TAKEN,
     WAIT_OPPONENT,  // A client is waiting for an opponent
+    OPPONENT_DISCONNECTED,
     // Game related message types
     GAME_STARTED,
     GAME_STATE,
