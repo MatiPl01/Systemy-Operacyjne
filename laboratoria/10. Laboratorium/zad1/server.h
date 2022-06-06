@@ -2,24 +2,26 @@
 #define SERVER_H
 
 #define MAX_CONNECTIONS 16
-const int PING_INTERVAL = 2000; // ms
-const int MAX_EVENTS_COUNT = 16;
+#define UNREGISTERED_NICKNAME "unregistered"
 
+const int PING_INTERVAL = 30000; // ms
+const int MAX_EVENTS_COUNT = 16;
 
 // CONNECTION
 typedef struct connection connection;
 
 typedef struct client {
-    char* nickname;
+    char nickname[MAX_NICKNAME_LENGTH];
     char symbol;
     connection *opponent_connection;
     game_state *game_state;
 } client;
 
 typedef enum connection_status {
-    EMPTY,
-    CONNECTED,
-    PINGED
+    EMPTY,       // There is no connection
+    CONNECTED,   // A client has connected but not registered (the nickname hasn't been received)
+    REGISTERED,  // A client has successfully registered (connection was established and client nickname was received)
+    PINGED       // A client was pinged and the server waits for a client's response
 } connection_status;
 
 struct connection {

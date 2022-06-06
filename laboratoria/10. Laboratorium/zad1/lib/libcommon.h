@@ -15,9 +15,11 @@
 #include <sys/epoll.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
-#include "libprint.h"
+#include "libcprint.h"
 
+#define MIN_NICKNAME_LENGTH 3
 #define MAX_NICKNAME_LENGTH 32
+#define PLAYER_SYMBOLS "OX"
 
 #define catch_perror(expr)             \
     catch_error(expr, strerror(errno)) \
@@ -44,30 +46,38 @@ typedef enum msg_type {
     PING,
     DISCONNECT,
     SERVER_FULL,
-    INIT,
+    USERNAME_TAKEN,
+    WAIT_OPPONENT,  // A client is waiting for an opponent
     // Game related message types
-    STATE,
-    MOVE,
-    WAIT,
-    WON,
-    LOST, // TODO - ?
-    DRAW, // TODO - ?
-    USERNAME_TAKEN
+    GAME_STARTED,
+    GAME_STATE,
+    GAME_RESULT,
+    MOVE
 } msg_type;
 
 typedef struct game_state {
     char curr_turn_symbol;
     char board[9];
+    int remaining_moves;
 } game_state;
 
+typedef enum game_result {
+    WON,
+    LOST,
+    DRAW,
+    PLAYING
+} game_result;
+
+typedef struct game_start {
+    char opponent[MAX_NICKNAME_LENGTH];  // Opponent nickname
+    char symbol;  // a symbol assigned to the client (either O or X)
+} game_start;
+
 typedef union msg_data {
-    struct {
-        char nickname[MAX_NICKNAME_LENGTH];
-        char symbol;  // a symbol assigned to the user (either O or X)
-    } user;
-    int move_id;  // a number identifying the user move (corresponding to the particular board field
-    game_state state;
-    char winner_symbol;  // a symbol of the winner player
+    int move_id;  // a number identifying the client move (corresponding to the particular board field
+    game_start game_start;
+    game_state game_state;
+    game_result game_result;
 } msg_data;
 
 typedef struct message {

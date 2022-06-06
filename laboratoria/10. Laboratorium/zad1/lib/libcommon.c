@@ -14,7 +14,7 @@ char* get_input_string(int *i, int argc, char* argv[], char* msg) {
     }
 
     // Otherwise, get an input from a user
-    printf("%s\n%s>>> %s", msg, COLORS[BRIGHT_YELLOW], COLORS[RESET]);
+    printf("%s\n%s>>> %s", msg, C_BRIGHT_YELLOW, C_RESET);
     char* line = "";
     size_t length = 0;
     getline(&line, &length, stdin);

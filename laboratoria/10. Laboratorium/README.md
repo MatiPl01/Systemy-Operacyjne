@@ -25,7 +25,7 @@ Klient przyjmuje jako swoje argumenty:
 - sposób połączenia z serwerem (sieć lub komunikacja lokalna przez gniazda UNIX),
 - adres serwera (adres IPv4 i numer portu lub ścieżkę do gniazda UNIX serwera).
 
-Klient, przy wyłączeniu `Ctrl+C`, powinien wyrejestrować się z serwera.
+Klient, przy naciśnięciu `Ctrl+C`, powinien wyrejestrować się z serwera.
 
 <br>
 
