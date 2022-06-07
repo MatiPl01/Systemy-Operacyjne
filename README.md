@@ -54,6 +54,4 @@ To repozytorium zawiera rozwiązania zadań z przedmiotu Systemy Operacyjne real
 ## 10. Laboratorium
 ### Sockety
 
-### ⚙ In progress...
-
 [Rozwiązania 10. laboratorium](https://github.com/MatiPl01/Systemy-Operacyjne/tree/main/laboratoria/10.%20Laboratorium)
