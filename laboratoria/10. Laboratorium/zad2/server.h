@@ -19,15 +19,21 @@ typedef struct client {
 
 typedef enum connection_status {
     EMPTY,       // There is no connection
-    CONNECTED,   // A client has connected but not registered (the nickname hasn't been received)
-    REGISTERED,  // A client has successfully registered (connection was established and client nickname was received)
+    REGISTERED,  // A client has successfully registered
     PINGED       // A client was pinged and the server waits for a client's response
 } connection_status;
+
+union addr {
+    struct sockaddr_un local;
+    struct sockaddr_in network;
+};
 
 struct connection {
     int client_socket_fd;
     client *client;
     connection_status status;
+    socklen_t addr_len;
+    union addr addr;
 };
 
 
