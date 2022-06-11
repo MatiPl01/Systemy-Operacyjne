@@ -48,13 +48,14 @@ Napisać program przyjmujący jeden (nadawca lub data) lub trzy argumenty (&lt;a
 
 ## Zadanie 3 (50%)
 ---
+### Uwaga
+*W zamieszczonym na repozytorium rozwiązaniu nie działa przypadek wiele do wielu. Gdy mamy wielu producentów i wielu konsumentów, gubione są dane.*
+
 Warto obejrzeć:
 - https://youtu.be/2hba3etpoJg
 - https://youtu.be/dniz3nEOEjU
 ---
-### Uwaga
-W zamieszczonym rozwiązaniu nie działa przypadek wiele do wielu. Gdy mamy wielu producentów i wielu konsumentów, gubione są dane.
----
+
 W problemie producenta i konsumenta występują dwa rodzaje procesów, które dzielą wspólny bufor dla produkowanych i konsumowanych jednostek. Zadaniem producenta jest wytworzenie surowca, umieszczenie go w buforze i rozpoczęcie pracy od nowa. Konsument pobiera surowiec z bufora i wykorzystuje go.
 
 ### 30%
